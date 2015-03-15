@@ -1,0 +1,16 @@
+.subunit-boundary {
+  fill: none;
+  stroke: #777;
+  stroke-dasharray: 2,2;
+  stroke-linejoin: round;
+}
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+.subunit { fill: #ddc; }
+.subunit.BFR { fill: #cdd; }
+.subunit.BWR { display: none}
+.subunit.BCR { display: none; }
