@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+
+{% block js %}
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+{% endblock %}
+
+
+{% block main %}
+<div class= "row" id="soort_selector">
+  <div class="col-md-12">
+    <form action="" method="post">
+      <select id="myselect" name="myselect" onchange="drawLocations(this.value)">
+        <option selected="selected">Kies vlindersoort</option>
+      </select>
+    </form>
+
+    <script>
+      $.ajax({
+        url: 'http://localhost:5000/data/soorten/',
+        dataType: "json",
+        contentType: "application/json",
+        success: function(json) {
+          $.each(json, function(i, value) {
+            $('#myselect')
+              .append($('<option value="'
+                                   + value.naam_nl
+                                   + '">')
+              .text(value.naam_nl));
+          });
+        }
+      });
+    </script>
+  </div>
+</div>
+
+<div class="row" id="graph_location">
+  <div class="col-md-4">
+    <script src="/static/js/graph_locations.js"></script>
+  </div>
+</div>
+{% endblock %}
