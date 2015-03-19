@@ -36,7 +36,7 @@
       // load and display the observations
       var filters = [{"name": "soort__naam_nl", "op": "has", "val": soort}];
       $.ajax({
-        url: 'http://localhost:5000/data/observaties/',
+        url: 'http://' + window.location.host + '/data/observaties/',
         data: {"soort": soort},
         dataType: "json",
         contentType: "application/json",

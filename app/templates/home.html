@@ -18,7 +18,7 @@
 
     <script>
       $.ajax({
-        url: 'http://localhost:5000/data/soorten/',
+        url: 'http://' + window.location.host + '/data/soorten/',
         dataType: "json",
         contentType: "application/json",
         success: function(json) {
