@@ -24,6 +24,19 @@ def home():
 ###
 # data API
 ###
+@app.route('/data/jaar_totaal/', methods=['GET'])
+def get_jaar_totaal():
+    if request.values.get('soort'):
+        modified_values = {
+            'soort': request.values.get('soort').title(),
+        }
+        return db.execute('get_jaar_totaal',
+                          fields=['soort'],
+                          values=modified_values)
+
+    return db.execute('get_jaar_totaal')
+
+
 @app.route('/data/observaties/', methods=['GET'])
 def get_observaties():
     if (request.values.get('soort') and
