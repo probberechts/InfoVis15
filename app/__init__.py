@@ -1,5 +1,6 @@
 import os
 from flask.ext.moresql import MoreSQL
+from flask.ext.cors import CORS
 from flask import Flask, render_template, request
 
 
