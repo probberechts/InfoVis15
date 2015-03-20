@@ -10,3 +10,4 @@ itsdangerous==0.24
 psycopg2==2.6
 simplejson==3.6.5
 wsgiref==0.1.2
+flask-cors

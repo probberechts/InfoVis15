@@ -10,6 +10,7 @@ if 'SECRET_KEY' in os.environ:
     app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 else:
     app.config['SECRET_KEY'] = 'this_should_be_configured'
+cors = CORS(app, resources={r"/data/*": {"origins": "*"}})
 
 
 ###
