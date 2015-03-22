@@ -11,12 +11,15 @@
 <div class= "row" id="soort_selector">
   <div class="col-md-12">
     <form action="" method="post">
-      <select id="myselect" name="myselect" onchange="drawLocations(this.value)">
+      <select id="myselect" name="myselect">
         <option selected="selected">Kies vlindersoort</option>
       </select>
     </form>
 
     <script>
+	//min en max date vars, kevin zijn grafiek zou deze variabelen moeten aanpassen
+		var minDate = new Date(2008, 0, 1);
+		var maxDate = new Date();
       $.ajax({
         url: 'http://' + window.location.host + '/data/soorten/',
         dataType: "json",
@@ -31,6 +34,16 @@
           });
         }
       });
+	  
+	  function updateGraph(soort){
+			drawLocations(soort);
+			updateTimeGraph(soort, minDate, maxDate);
+	  }
+	  
+	  //eventhandler ipv onchange, anders kan het zijn dat functies in externe .js files niet gevonden worden
+	  $("#myselect").change(function(){
+		updateGraph($(this).val());
+	  });
     </script>
   </div>
 </div>
@@ -39,5 +52,12 @@
   <div class="col-md-4">
     <script src="/static/js/graph_locations.js"></script>
   </div>
+</div>
+
+<div class="row" id="monthgraph">
+	<div class="col-md-4">
+		<script src="/static/js/timelinechart.js"></script>
+		<script src="/static/js/graphtom.js"></script>
+	</div>
 </div>
 {% endblock %}
