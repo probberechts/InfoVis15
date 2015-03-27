@@ -22,11 +22,11 @@
 <script src="/static/js/leaflet-heat.js"></script>
 
 <script>
-var dataURL = 'http://localhost:5000/data/observaties/?soort=bruin blauwtje';
+var dataURL = '/data/observaties/?soort=bruin blauwtje';
 
 var map = L.map('map').setView([51.1, 4.2], 8);
 var tiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  
+
 }).addTo(map);
 
 $.ajax({
