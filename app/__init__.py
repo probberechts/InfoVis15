@@ -22,7 +22,15 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
+@app.route('/map.html')
+def map():
+    """Render website's home page."""
+    return render_template('map.html')
 
+@app.route('/heatmap.html')
+def heatmap():
+    """Render website's home page."""
+    return render_template('heatmap.html')
 ###
 # data API
 ###
