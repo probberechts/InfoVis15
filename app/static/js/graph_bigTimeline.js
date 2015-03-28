@@ -1,13 +1,3 @@
-var w = 500;
-var h = 300;
-var barPadding = 1;
-
-var parseDate = d3.time.format("%Y-%m-%d").parse;
-
-var svg = d3.select("body").append("svg")
-        .attr("width", w)
-        .attr("height", h);
-
 function renderTimeline(soort) {
   console.log("timeline for " + soort);
 
@@ -19,12 +9,13 @@ function renderTimeline(soort) {
     dataType: "json",
     contentType: "application/json",
     success: function(response) {
-      console.log("fetched data for " + soort)
+      console.log("fetched data for " + soort + " barchart");
       data = response;
 
       var allYears = [];
       var today = new Date();
       var currentYear = today.getFullYear();
+      var parseDate = d3.time.format("%Y-%m-%d").parse;
       
       data.forEach(function(d) {
         var tempYear = parseDate(d.datum).getFullYear();
@@ -50,26 +41,40 @@ function renderTimeline(soort) {
 
       var yearlyOcc = [];
       for( var i in  yearlyOccTemp ){
-        yearlyOcc.push([i,yearlyOccTemp[i]]);
+        yearlyOcc.push([new Date(i, 0, 1), yearlyOccTemp[i]]);
+        //yearlyOcc.push([i, yearlyOccTemp[i]]);
       }
-      console.log(yearlyOcc);
+      //console.log(yearlyOcc);
+
+
+      var margin = {top: 20, right: 20, bottom: 70, left: 60};
+      var w = 600 - margin.left - margin.right;
+      var h = 300 - margin.top - margin.bottom;
+      var barPadding = 1;
+
+      d3.select("#timelinegraph").remove();
+      var svg = d3.select("#timeline").append("svg")
+        .attr("id", "timelinegraph")
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       var x = d3.time.scale().range([0, w]);
       var y = d3.scale.linear().range([h, 0]);
 
+      x.domain([new Date(2005, 0, 1), new Date()]);
+      //x.domain([2005, currentYear]);
+      y.domain([0, d3.max(yearlyOcc, function(d) { return d[1]; })]);
+
       var xAxis = d3.svg.axis()
           .scale(x)
-          .orient("bottom")
-          .ticks(d3.time.years)
-          .tickFormat(d3.time.format("%Y"));
+          .orient("bottom");
 
       var yAxis = d3.svg.axis()
           .scale(y)
           .orient("left")
           .ticks(10);
-
-      x.domain([2005, currentYear]);
-      y.domain([0, d3.max(yearlyOcc, function(d) { return d[1]; })]);
 
       svg.append("g")
           .attr("class", "x axis")
@@ -83,6 +88,7 @@ function renderTimeline(soort) {
 
       svg.append("g")
           .attr("class", "y axis")
+          .attr("transform", "translate(" + -20 + ",0)")
           .call(yAxis)
           .append("text")
           .attr("transform", "rotate(-90)")
@@ -100,7 +106,7 @@ function renderTimeline(soort) {
           .attr("y", function(d) { return y(d[1]); })
           .attr("height", function(d) { return h - y(d[1]); });
 
-      console.log("testing");
+      /*console.log("testing");
       svg.selectAll("text")
          .data(yearlyOcc)
          .enter()
@@ -114,7 +120,7 @@ function renderTimeline(soort) {
          .attr("font-family", "sans-serif")
          .attr("font-size", "11px")
          .attr("fill", "red");
-      console.log("testing2");
+      console.log("testing2");*/
     }
   });
 }

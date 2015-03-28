@@ -37,6 +37,7 @@
 	  
 	  function updateGraph(soort){
 			drawLocations(soort);
+      renderTimeline(soort);
 			updateTimeGraph(soort, minDate, maxDate);
 	  }
 	  
@@ -51,6 +52,12 @@
 <div class="row" id="graph_location">
   <div class="col-md-4">
     <script src="/static/js/graph_locations.js"></script>
+  </div>
+</div>
+
+<div class="row" id="timeline">
+  <div class="col-md-4">
+    <script src="/static/js/graph_bigTimeline.js"></script>
   </div>
 </div>
 
