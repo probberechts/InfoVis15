@@ -9,7 +9,7 @@
       .scale(1200*11)
       .translate([width / 2, height / 2]);
 
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("#graph_location").append("svg")
           .attr("width", width)
           .attr("height", height);
 
