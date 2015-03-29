@@ -106,6 +106,7 @@ function renderTimeline(soort) {
           .data(yearlyOcc)
           .enter().append("rect")
           .style("fill", "steelblue")
+          .attr("class", "bar")
           .attr("x", function(d) { return x(d[0]) - (w/yearlyOcc.length - 15)/2; })
           .attr("width", w/yearlyOcc.length - 15)
           .attr("y", function(d) { return y(d[1]); })
@@ -113,6 +114,8 @@ function renderTimeline(soort) {
           .on("click", function(d) {
             var nextyear = new Date(d[0].getFullYear() + 1, d[0].getMonth(), d[0].getDay());
             updateTimeGraph(soort, d[0], nextyear);
+            resetcolors();
+            d3.select(this).style("fill", "red");
           });
 
       //brush not used anymore
@@ -123,6 +126,10 @@ function renderTimeline(soort) {
         .attr("y", -6)
         .attr("height", h + 7);*/
 
+      function resetcolors() {
+        svg.selectAll(".bar")
+          .style("fill", "steelblue");
+      }
       /*function brushed() {
         //http://bl.ocks.org/mbostock/1667367
         //send selected dates to Tom's graph
