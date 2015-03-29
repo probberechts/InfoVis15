@@ -21,6 +21,7 @@ data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;}
 	var zoomtime = d3.behavior.zoom()
 		.x(x)
 		//.y(y)
+		.scaleExtent([1, 256])
 		.on("zoom", zoomed);
 
 	d3.select("#svggraph").remove();
@@ -74,6 +75,7 @@ data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;}
 		.attr("d", line);
 
 	function zoomed() {
+	console.log(d3.event.scale);
 		svg.select(".x.axis").call(xAxis);
 		svg.select(".y.axis").call(yAxis);
 		innerSvg.select(".line")
