@@ -76,9 +76,10 @@ function renderTimeline(soort) {
           .orient("left")
           .ticks(10);
 
-      var brush = d3.svg.brush()
+      //brush no used anymore
+      /*var brush = d3.svg.brush()
         .x(x)
-        .on("brush", brushed);
+        .on("brush", brushed);*/
 
       svg.append("g")
           .attr("class", "x axis")
@@ -108,23 +109,26 @@ function renderTimeline(soort) {
           .attr("x", function(d) { return x(d[0]) - (w/yearlyOcc.length - 15)/2; })
           .attr("width", w/yearlyOcc.length - 15)
           .attr("y", function(d) { return y(d[1]); })
-          .attr("height", function(d) { return h - y(d[1]); });
+          .attr("height", function(d) { return h - y(d[1]); })
+          .on("click", function(d) {
+            var nextyear = new Date(d[0].getFullYear() + 1, d[0].getMonth(), d[0].getDay());
+            updateTimeGraph(soort, d[0], nextyear);
+          });
 
-      svg.append("g")
+      //brush not used anymore
+      /*svg.append("g")
         .attr("class", "x brush")
         .call(brush)
         .selectAll("rect")
         .attr("y", -6)
-        .attr("height", h + 7);
+        .attr("height", h + 7);*/
 
-
-      function brushed() {
+      /*function brushed() {
         //http://bl.ocks.org/mbostock/1667367
         //send selected dates to Tom's graph
-
         var selectedDates = brush.extent();
         updateTimeGraph(soort, selectedDates[0], selectedDates[1]);        
-      }
+      }*/
 
     }
   });
