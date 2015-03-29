@@ -11,8 +11,12 @@ function updateTimeGraph(soort, minDate, maxDate){
 			d.key = d3.time.format("%Y-%m-%d").parse(d.key);
 			d.values = +d.values;
 		});
-		data = data.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
+		
 		data.sort(function(a,b){return a.key - b.key;});
+		data.forEach(function(d) {
+			if(d.key > new Date())//filter out impossible dates, TODO remove these from the DB
+				d.key = null;
+		});
 		renderTimeLineChart("#monthgraph", data, minDate, maxDate);
 	}});
 }

@@ -17,9 +17,6 @@
     </form>
 
     <script>
-	//min en max date vars, kevin zijn grafiek zou deze variabelen moeten aanpassen
-		var minDate = new Date(2008, 0, 1);
-		var maxDate = new Date();
       $.ajax({
         url: 'http://' + window.location.host + '/data/soorten/',
         dataType: "json",
@@ -38,7 +35,7 @@
 	  function updateGraph(soort){
 			drawLocations(soort);
       renderTimeline(soort);
-			updateTimeGraph(soort, minDate, maxDate);
+			updateTimeGraph(soort, null, null);
 	  }
 
 	  //eventhandler ipv onchange, anders kan het zijn dat functies in externe .js files niet gevonden worden

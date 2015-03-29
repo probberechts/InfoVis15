@@ -1,48 +1,48 @@
-function renderTimeLineChart(div, data, minDate, maxDate){
+function renderTimeLineChart(div, origdata, minDate, maxDate){
 
-console.log();
-var maanden = (maxDate-minDate)/1000/60/60/24/30;
-var jaren = (maxDate-minDate)/1000/60/60/24/365;
-var tticks = d3.time.months;
-var ttickFormat = d3.time.format("%b-%Y");
-//aantal maanden/jaren om van view te wisselen needs tweaking
-if(maanden < 3){
-	tticks = d3.time.days;
-	ttickFormat = d3.time.format("%d-%m-%Y");
-}else if(jaren > 4){
-	tticks = d3.time.years;
-	ttickFormat = d3.time.format("%Y");
+if(minDate == null || maxDate == null){
+	domm = d3.extent(origdata, function(d){ return d.key; });
+	minDate = domm[0];
+	maxDate = domm[1];
 }
+data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
 	
 	var margin = {top: 20, right: 20, bottom: 70, left: 40},
 		width = 600 - margin.left - margin.right,
 		height = 300 - margin.top - margin.bottom;
 
-	var x = d3.time.scale().range([0, width]);
-	var y = d3.scale.linear().range([height, 0]);
-
-	var xAxis = d3.svg.axis()
-		.scale(x)
-		.orient("bottom")
-		.ticks(tticks)
-		.tickFormat(ttickFormat);
-
-	var yAxis = d3.svg.axis()
-		.scale(y)
-		.orient("left");
+	var x = d3.time.scale().domain([minDate, maxDate]).range([0, width]);
+	var y = d3.scale.linear().domain([0, d3.max(data, function(d) { return d.values; })]).range([height, 0]);
+	
+	var line = d3.svg.line()
+		.x(function(d) { return x(d.key); })
+		.y(function(d) { return y(d.values); });
+		
+	var zoomtime = d3.behavior.zoom()
+		.x(x)
+		//.y(y)
+		.on("zoom", zoomed);
 
 	d3.select("#svggraph").remove();
 	var svg = d3.select(div).append("svg")
 		.attr("id", "svggraph")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
+		.call(zoomtime)
 	  .append("g")
 		.attr("transform",
 			  "translate(" + margin.left + "," + margin.top + ")");
-
-	x.domain([minDate, maxDate]);
-	y.domain([0, d3.max(data, function(d) { return d.values; })]);
-
+	
+	//necessary so that when zooming graph is not rendered outside of graph
+	var innerSvg = svg.append("svg")
+		.attr("width", width)
+		.attr("height", height);
+		
+	var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom")
+			.ticks(5);
+			
 	svg.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + height + ")")
@@ -50,9 +50,14 @@ if(maanden < 3){
 	.selectAll("text")
 		.style("text-anchor", "end")
 		.attr("dx", "-.8em")
-		.attr("dy", "-.55em")
-		.attr("transform", "rotate(-90)" );
+		.attr("dy", "-.55em");
+		//.attr("transform", "rotate(-90)" );
 
+	var yAxis = d3.svg.axis()
+			.scale(y)
+			.orient("left")
+			.ticks(5);
+			
 	svg.append("g")
 		.attr("class", "y axis")
 		.call(yAxis)
@@ -62,13 +67,42 @@ if(maanden < 3){
 		.attr("dy", ".71em")
 		.style("text-anchor", "end")
 		.text("Aantal");
-
-	var line = d3.svg.line()
-		.x(function(d) { return x(d.key); })
-		.y(function(d) { return y(d.values); });
 	
-	svg.append("path")
+	innerSvg.append("path")
 		.datum(data)
 		.attr("class", "line")
 		.attr("d", line);
+
+	function zoomed() {
+		svg.select(".x.axis").call(xAxis);
+		svg.select(".y.axis").call(yAxis);
+		innerSvg.select(".line")
+			.attr("class", "line")
+			.attr("d", line);
+	};
 }
+
+function getTTicks(minD, maxD){
+	var maanden = (maxDate-minDate)/1000/60/60/24/30;
+	var jaren = (maxDate-minDate)/1000/60/60/24/365;
+	//aantal maanden/jaren om van view te wisselen needs tweaking
+	if(maanden < 3)
+		return d3.time.days;
+	else if(jaren > 4)
+		return d3.time.years;
+	else
+		return d3.time.months;
+}
+
+function getTTimeFormat(minD, maxD){
+	var maanden = (maxDate-minDate)/1000/60/60/24/30;
+	var jaren = (maxDate-minDate)/1000/60/60/24/365;
+	//aantal maanden/jaren om van view te wisselen needs tweaking
+	if(maanden < 3)
+		return d3.time.format("%d-%m-%Y");
+	else if(jaren > 4)
+		return d3.time.format("%Y");
+	else
+		return d3.time.format("%b-%Y");
+}
+
