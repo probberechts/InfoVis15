@@ -1760,71 +1760,7 @@
                     ]
                 ]
             }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Hasselt"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    5.484071334188343,
-                    50.963914519222925
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Gent"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    3.700081140108586,
-                    51.029954611962204
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Brugge"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    3.2300016505238553,
-                    51.22047027344036
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Antwerpen"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    4.412906595626415,
-                    51.22227136687871
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Brussels"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    4.331220651534643,
-                    50.835236399127915
-                ]
-            }
         }
+
     ]
 }

@@ -27,6 +27,11 @@ def map():
     """Render website's home page."""
     return render_template('map.html')
 
+@app.route('/map2.html')
+def map2():
+    """Render website's home page."""
+    return render_template('map2.html')
+
 @app.route('/heatmap.html')
 def heatmap():
     """Render website's home page."""
