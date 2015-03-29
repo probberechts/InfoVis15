@@ -34,13 +34,13 @@
           });
         }
       });
-	  
+
 	  function updateGraph(soort){
 			drawLocations(soort);
       renderTimeline(soort);
 			updateTimeGraph(soort, minDate, maxDate);
 	  }
-	  
+
 	  //eventhandler ipv onchange, anders kan het zijn dat functies in externe .js files niet gevonden worden
 	  $("#myselect").change(function(){
 		updateGraph($(this).val());
@@ -49,20 +49,17 @@
   </div>
 </div>
 
-<div class="row" id="graph_location">
-  <div class="col-md-4">
+<div class="row">
+  <div class="col-xs-6 pull-left" id="timeline">
+    <script src="/static/js/graph_bigTimeline.js"></script>
+  </div>
+  <div class="col-xs-6" id="graph_location">
     <script src="/static/js/graph_locations.js"></script>
   </div>
 </div>
 
-<div class="row" id="timeline">
-  <div class="col-md-4">
-    <script src="/static/js/graph_bigTimeline.js"></script>
-  </div>
-</div>
-
-<div class="row" id="monthgraph">
-	<div class="col-md-4">
+<div class="row">
+	<div class="col-xs-6" id="monthgraph">
 		<script src="/static/js/timelinechart.js"></script>
 		<script src="/static/js/graphtom.js"></script>
 	</div>

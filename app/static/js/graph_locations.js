@@ -61,7 +61,7 @@
 
   d3.json("/static/js/bel.json", function(error, bel) {
 
-    
+
     var subunits = topojson.feature(bel, bel.objects.subunits),
         places = topojson.feature(bel, bel.objects.places);
 
