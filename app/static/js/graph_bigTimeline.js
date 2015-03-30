@@ -115,7 +115,7 @@ function renderTimeline(soort) {
             var nextyear = new Date(d[0].getFullYear() + 1, d[0].getMonth(), d[0].getDay());
             updateTimeGraph(soort, d[0], nextyear);
             resetcolors();
-            d3.select(this).style("fill", "red");
+            d3.select(this).style("fill", "blue");
           });
 
       //brush not used anymore
