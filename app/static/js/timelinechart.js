@@ -1,23 +1,23 @@
 function renderTimeLineChart(div, origdata, minDate, maxDate){
 
-if(minDate == null || maxDate == null){
-	domm = d3.extent(origdata, function(d){ return d.key; });
-	minDate = domm[0];
-	maxDate = domm[1];
-}
-data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
-	
+	if(minDate == null || maxDate == null){
+		domm = d3.extent(origdata, function(d){ return d.key; });
+		minDate = domm[0];
+		maxDate = domm[1];
+	}
+	data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
+
 	var margin = {top: 20, right: 20, bottom: 70, left: 40},
 		width = 600 - margin.left - margin.right,
 		height = 300 - margin.top - margin.bottom;
 
 	var x = d3.time.scale().domain([minDate, maxDate]).range([0, width]);
 	var y = d3.scale.linear().domain([0, d3.max(data, function(d) { return d.values; })]).range([height, 0]);
-	
+
 	var line = d3.svg.line()
 		.x(function(d) { return x(d.key); })
 		.y(function(d) { return y(d.values); });
-		
+
 	var zoomtime = d3.behavior.zoom()
 		.x(x)
 		//.y(y)
@@ -33,17 +33,17 @@ data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;}
 	  .append("g")
 		.attr("transform",
 			  "translate(" + margin.left + "," + margin.top + ")");
-	
+
 	//necessary so that when zooming graph is not rendered outside of graph
 	var innerSvg = svg.append("svg")
 		.attr("width", width)
 		.attr("height", height);
-		
+
 	var xAxis = d3.svg.axis()
 			.scale(x)
 			.orient("bottom")
 			.ticks(5);
-			
+
 	svg.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + height + ")")
@@ -58,7 +58,7 @@ data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;}
 			.scale(y)
 			.orient("left")
 			.ticks(5);
-			
+
 	svg.append("g")
 		.attr("class", "y axis")
 		.call(yAxis)
@@ -68,7 +68,7 @@ data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;}
 		.attr("dy", ".71em")
 		.style("text-anchor", "end")
 		.text("Aantal");
-	
+
 	innerSvg.append("path")
 		.datum(data)
 		.attr("class", "line")
@@ -108,3 +108,17 @@ function getTTimeFormat(minD, maxD){
 		return d3.time.format("%b-%Y");
 }
 
+function updateTimeGraph(data, minDate, maxDate){
+		data = d3.nest().key(function(d){return d.datum;}).rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});}).entries(data);
+		data.forEach(function(d) {
+			d.key = d3.time.format("%Y-%m-%d").parse(d.key);
+			d.values = +d.values;
+		});
+
+		data.sort(function(a,b){return a.key - b.key;});
+		data.forEach(function(d) {
+			if(d.key > new Date())//filter out impossible dates, TODO remove these from the DB
+				d.key = null;
+		});
+		renderTimeLineChart("#monthgraph", data, minDate, maxDate);
+}

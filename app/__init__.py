@@ -22,17 +22,22 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
-@app.route('/map.html')
+@app.route('/simplemap')
 def map():
+    """Render website's home page."""
+    return render_template('scatterplot.html')
+
+@app.route('/binmap')
+def binmap():
     """Render website's home page."""
     return render_template('map.html')
 
-@app.route('/map2.html')
-def map2():
+@app.route('/binmap2')
+def binmap2():
     """Render website's home page."""
     return render_template('map2.html')
 
-@app.route('/heatmap.html')
+@app.route('/heatmap')
 def heatmap():
     """Render website's home page."""
     return render_template('heatmap.html')

@@ -29,6 +29,15 @@ body {
   shape-rendering: crispEdges;
 }
 
+.soortSelector {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background: #FAFAFA;
+  text-align: center;
+}
+
+#heatmap { width: 600px; height: 300px; }
+
 /**
  * For the location map
  */

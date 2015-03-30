@@ -4,13 +4,16 @@
 {% block js %}
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/static/js/leaflet-heat.js"></script>
 {% endblock %}
 
 
 {% block main %}
 <div class= "row" id="soort_selector">
   <div class="col-md-12">
-    <form action="" method="post">
+    <form class="soortSelector" action="" method="post">
       <select id="myselect" name="myselect">
         <option selected="selected">Kies vlindersoort</option>
       </select>
@@ -32,15 +35,52 @@
         }
       });
 
-	  function updateGraph(soort){
-			drawLocations(soort);
-      renderTimeline(soort);
-			updateTimeGraph(soort, null, null);
+    var selectedSoort;
+	  function updateSoort(soort) {
+      selectedSoort = soort;
+      var start = "20050101"
+      var end = "20141231"
+      $.ajax({
+            url: 'http://' + window.location.host + '/data/observaties/',
+            data: {"soort": soort, "start_date": start, "end_date": end},
+            dataType: "json",
+            contentType: "application/json",
+            success: function(data) {
+              renderTimeline(data);
+              updateTimeGraph(data, null, null);
+              renderHeatMap();
+              updateHeatMap(data);
+            }
+      });
 	  }
 
+    var selectedYear;
+    function updateYear(year) {
+      selectedYear = year;
+      var start = new Date(year, 0, 1);
+      var end = new Date(year, 11, 31);
+      Date.prototype.yyyymmdd = function() {
+         var yyyy = this.getFullYear().toString();
+         var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+         var dd  = this.getDate().toString();
+         return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+      };
+
+      $.ajax({
+            url: 'http://' + window.location.host + '/data/observaties/',
+            data: {"soort": selectedSoort, "start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
+            dataType: "json",
+            contentType: "application/json",
+            success: function(data) {
+              updateTimeGraph(data, start, end);
+              updateHeatMap(data);
+            }
+      });
+    }
+
 	  //eventhandler ipv onchange, anders kan het zijn dat functies in externe .js files niet gevonden worden
-	  $("#myselect").change(function(){
-		updateGraph($(this).val());
+	  $("#myselect").change( function() {
+		    updateSoort($(this).val());
 	  });
     </script>
   </div>
@@ -50,15 +90,14 @@
   <div class="col-xs-6 pull-left" id="timeline">
     <script src="/static/js/graph_bigTimeline.js"></script>
   </div>
-  <div class="col-xs-6" id="graph_location">
-    <script src="/static/js/graph_locations.js"></script>
+  <div class="col-xs-6" id="heatmap">
+    <script src="/static/js/heatmap.js"></script>
   </div>
 </div>
 
 <div class="row">
 	<div class="col-xs-6" id="monthgraph">
 		<script src="/static/js/timelinechart.js"></script>
-		<script src="/static/js/graphtom.js"></script>
 	</div>
 </div>
 {% endblock %}

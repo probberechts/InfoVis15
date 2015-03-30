@@ -1,27 +1,10 @@
-function renderTimeline(soort) {
-  console.log("timeline for " + soort);
-
-  // load and display the observations
-  var filters = [{"name": "soort__naam_nl", "op": "has", "val": soort}];
-  $.ajax({
-    url: 'http://' + window.location.host + '/data/observaties/',
-    data: {"soort": soort},
-    dataType: "json",
-    contentType: "application/json",
-    success: function(response) {
-      console.log("fetched data for " + soort + " barchart");
-      data = response;
-
+function renderTimeline(data) {
       var allYears = [];
-      var today = new Date();
-      var currentYear = today.getFullYear();
       var parseDate = d3.time.format("%Y-%m-%d").parse;
-      
+
       data.forEach(function(d) {
         var tempYear = parseDate(d.datum).getFullYear();
-        if(tempYear >= 2005 && tempYear <= currentYear) {
-          allYears.push(tempYear);
-        }
+        allYears.push(tempYear);
       });
 
       var yearlyOccTemp = allYears.reduce(function (acc, curr) {
@@ -36,7 +19,7 @@ function renderTimeline(soort) {
 
       /*console.log(yearlyOccTemp);
       for( var i in  yearlyOccTemp ){
-        console.log( i + ' occured ' + yearlyOccTemp[i] + ' times ' ); 
+        console.log( i + ' occured ' + yearlyOccTemp[i] + ' times ' );
       }*/
 
       var yearlyOcc = [];
@@ -63,7 +46,7 @@ function renderTimeline(soort) {
       var x = d3.time.scale().range([0, w]);
       var y = d3.scale.linear().range([h, 0]);
 
-      x.domain([new Date(2005, 0, 1), new Date()]);
+      x.domain([new Date(2005, 0, 1), new Date(2014, 11, 31)]);
       //x.domain([2005, currentYear]);
       y.domain([0, d3.max(yearlyOcc, function(d) { return d[1]; })]);
 
@@ -112,8 +95,7 @@ function renderTimeline(soort) {
           .attr("y", function(d) { return y(d[1]); })
           .attr("height", function(d) { return h - y(d[1]); })
           .on("click", function(d) {
-            var nextyear = new Date(d[0].getFullYear() + 1, d[0].getMonth(), d[0].getDay());
-            updateTimeGraph(soort, d[0], nextyear);
+            updateYear(d[0].getFullYear());
             resetcolors();
             d3.select(this).style("fill", "red");
           });
@@ -134,10 +116,6 @@ function renderTimeline(soort) {
         //http://bl.ocks.org/mbostock/1667367
         //send selected dates to Tom's graph
         var selectedDates = brush.extent();
-        updateTimeGraph(soort, selectedDates[0], selectedDates[1]);        
+        updateTimeGraph(soort, selectedDates[0], selectedDates[1]);
       }*/
-
-    }
-  });
 }
-
