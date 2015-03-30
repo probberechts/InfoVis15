@@ -97,7 +97,7 @@ function renderTimeline(data) {
           .on("click", function(d) {
             updateYear(d[0].getFullYear());
             resetcolors();
-            d3.select(this).style("fill", "red");
+            d3.select(this).style("fill", "blue");
           });
 
       //brush not used anymore
