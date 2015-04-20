@@ -19,7 +19,7 @@ body {
 
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: #18bc9c;
   stroke-width: 1.5px;
 }
 
@@ -36,7 +36,10 @@ body {
   text-align: center;
 }
 
-#heatmap { width: 600px; height: 300px; }
+#heatmap {
+  max-width: 100%;
+  height: 250px;
+}
 
 /**
  * For the location map
@@ -65,3 +68,31 @@ body {
 .subunit.BFR { fill: #cdd; }
 .subunit.BWR { display: none}
 .subunit.BCR { display: none; }
+
+/**
+* Bin map
+**/
+@import url("http://polymaps.org/style.css");
+
+div .map {
+  min-width:560px;
+  max-width: 100%;
+  height: 250px;
+}
+
+svg {
+    display: block;
+}
+
+circle {
+    stroke: grey;
+    fill: red;
+    fill-opacity: 1;
+}
+
+path.bel {
+  fill: none;
+  stroke: #777;
+  stroke-dasharray: 2,2;
+  stroke-linejoin: round;
+}

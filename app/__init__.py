@@ -22,6 +22,11 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
+@app.route('/visualisatie')
+def visualisatie():
+    """Render the visualisation."""
+    return render_template('vis.html')
+
 @app.route('/simplemap')
 def map():
     """Render website's home page."""

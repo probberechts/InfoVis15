@@ -88,7 +88,7 @@ function renderTimeline(data) {
       svg.selectAll("bar")
           .data(yearlyOcc)
           .enter().append("rect")
-          .style("fill", "steelblue")
+          .style("fill", "#18bc9c")
           .attr("class", "bar")
           .attr("x", function(d) { return x(d[0]) - (w/yearlyOcc.length - 15)/2; })
           .attr("width", w/yearlyOcc.length - 15)
@@ -97,7 +97,7 @@ function renderTimeline(data) {
           .on("click", function(d) {
             updateYear(d[0].getFullYear());
             resetcolors();
-            d3.select(this).style("fill", "blue");
+            d3.select(this).style("fill", "steelblue");
           });
 
       //brush not used anymore
@@ -110,7 +110,7 @@ function renderTimeline(data) {
 
       function resetcolors() {
         svg.selectAll(".bar")
-          .style("fill", "steelblue");
+          .style("fill", "#18bc9c");
       }
       /*function brushed() {
         //http://bl.ocks.org/mbostock/1667367

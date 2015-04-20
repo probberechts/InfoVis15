@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="Data Chartists">
-  <link rel="shortcut icon" href="/static/favicon.ico">
+  <link rel="shortcut icon" href="/static/favicon.png">
 
   <!-- HTML5 shim, for IE 6-8 support of HTML elements -->
   <!--[if lt IE 9]>
@@ -16,9 +16,15 @@
   <![endif]-->
 
   <link rel="stylesheet" href="/static/css/bootstrap.css">
-  <link rel="stylesheet" href="/static/css/bootstrap-responsive.css">
   <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/selectize.css">
+  <link rel="stylesheet" href="/static/css/freelancer.css">
   {% block css %}{% endblock %}
+
+  <!-- Custom Fonts -->
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
   <!-- Need Modernizr? Uncomment the following script. -->
   <!-- <script src="/static/js/modernizr.js"></script> -->
@@ -26,7 +32,8 @@
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if necessary -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="/static/js/libs/jquery.js">\x3C/script>')</script>
-
+  <script src="/static/js/freelancer.js"></script>
+  <script src="/static/js/selectize.js"></script>
  <!-- Additional JavaScript libraries and plugins... -->
   {% block js %}{% endblock %}
 
@@ -34,13 +41,7 @@
 
 <body>
 
-  <header>
-    {% include "header.html" %}
-  </header>
-
-  <div class="container" id="main" role="main">
     {% block main %}{% endblock %}
-  </div>
 
   <footer>
     {% include "footer.html" %}

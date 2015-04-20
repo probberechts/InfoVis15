@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/css/colorbrewer.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/colorbrewer.stroke.css" />
+{% endblock %}
+
+{% block js %}
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/static/js/leaflet-heat.js"></script>
+<script type="text/javascript" src="/static/js/d3.geo.js"></script>
+<script type="text/javascript" src="/static/js/polymaps.js"></script>
+<script type="text/javascript" src="/static/js/hex.js"></script>
+<script type="text/javascript" src="/static/js/d3.hexbin.js"></script>
+{% endblock %}
+
+
+{% block main %}
+<nav class="navbar navbar-default navbar-fixed-top visnav">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
+        </div>
+
+        <div class="control-group" style="text-align:center;">
+          <select class="searchbox center form-control input-lg" placeholder="Kies een vlinder...">
+            <option></option>
+          </select>
+
+          <script>
+          // load the data
+          $.ajax({
+            url: 'http://' + window.location.host + '/data/soorten/',
+            dataType: "json",
+            contentType: "application/json",
+            success: function(json) {
+              $.each(json, function(i, value) {
+                $('.searchbox')
+                  .append($('<option value="'
+                                       + value.naam_nl
+                                       + '">')
+                  .text(value.naam_nl));
+              });
+              $('.searchbox').selectize();
+            }
+          });
+
+          function getQueryParams(qs) {
+              qs = qs.split("+").join(" ");
+
+              var params = {}, tokens,
+                  re = /[?&]?([^=]+)=([^&]*)/g;
+
+              while (tokens = re.exec(qs)) {
+                  params[decodeURIComponent(tokens[1])]
+                      = decodeURIComponent(tokens[2]);
+              }
+
+              return params;
+          }
+
+          // action if a new sort is selected
+          $(".searchbox").change( function() {
+              updateSoort($(this).val());
+              $("#placeholder").hide();
+          });
+          </script>
+        </div>
+</nav>
+
+
+<section id="visualisation">
+    <div class="container">
+      <div id="soort_info">
+        <div class="row" id="soort_info">
+          <div class="col-md-4">
+            <img src="http://fc04.deviantart.net/fs70/f/2012/121/6/c/butterfly_png_by_angiekidrauhl-d4y8mit.png" alt="vlinder" class="img-rounded">
+          </div>
+          <div class="col-md-7 offset-1">
+            <p>
+            <a href="#"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Wikipedia</a>
+          </p>
+          <p>
+            <strong>Familie:</strong> Nymphalidae<br/>
+            <strong>Habitat:</strong> Grasland<br/>
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+          </div>
+        </div>
+        <hr>
+      </div>
+      <div class= "row" id="soort_selector">
+        <div class="col-md-12">
+          <img id="placeholder" class="placeholder" src="/static/img/placeholder.png" />
+          <script>
+          $("#soort_info").hide();
+
+          var selectedSoort;
+      	  function updateSoort(soort) {
+            selectedSoort = soort;
+            var start = "20050101"
+            var end = "20141231"
+            $.ajax({
+                  url: 'http://' + window.location.host + '/data/observaties/',
+                  data: {"soort": soort, "start_date": start, "end_date": end},
+                  dataType: "json",
+                  contentType: "application/json",
+                  success: function(data) {
+                    renderTimeline(data);
+                    updateTimeGraph(data, null, null);
+                    updateBinmap(data);
+                    $("#soort_info").show();
+                    //renderHeatMap();
+                    //updateHeatMap(data);
+                  }
+            });
+      	  }
+
+          var selectedYear;
+          function updateYear(year) {
+            selectedYear = year;
+            var start = new Date(year, 0, 1);
+            var end = new Date(year, 11, 31);
+            Date.prototype.yyyymmdd = function() {
+               var yyyy = this.getFullYear().toString();
+               var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+               var dd  = this.getDate().toString();
+               return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+            };
+
+            $.ajax({
+                  url: 'http://' + window.location.host + '/data/observaties/',
+                  data: {"soort": selectedSoort, "start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
+                  dataType: "json",
+                  contentType: "application/json",
+                  success: function(data) {
+                    updateTimeGraph(data, start, end);
+                    //updateHeatMap(data);
+                    updateBinmap(data);
+                  }
+            });
+          }
+
+          var predefinedSort = getQueryParams(document.location.search).soort;
+          if (predefinedSort) {
+            $(".searchbox").attr("placeholder", predefinedSort);
+            updateSoort(predefinedSort);
+            $("#placeholder").hide();
+          }
+          </script>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-6 pull-left" id="timeline">
+          <script src="/static/js/graph_bigTimeline.js"></script>
+        </div>
+        <div class="col-xs-6" id="overviewMap" class="map">
+        <script src="/static/js/binMap.js"></script>
+        </div>
+      </div>
+
+      <div class="row">
+      	<div class="col-xs-6" id="monthgraph">
+      		<script src="/static/js/timelinechart.js"></script>
+      	</div>
+        <div class="col-xs-6" id="focusMap" class="map">
+        </div>
+      </div>
+  </div>
+</section>
+{% endblock %}
