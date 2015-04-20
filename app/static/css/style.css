@@ -85,7 +85,7 @@ svg {
 }
 
 circle {
-    stroke: grey;
+    stroke: yellow;
     fill: red;
     fill-opacity: 1;
 }

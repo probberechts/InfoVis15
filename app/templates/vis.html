@@ -73,6 +73,7 @@
           $(".searchbox").change( function() {
               updateSoort($(this).val());
               $("#placeholder").hide();
+              $("#loader").show();
           });
           </script>
         </div>
@@ -81,6 +82,12 @@
 
 <section id="visualisation">
     <div class="container">
+      <div class= "row">
+        <div class="col-md-12">
+            <p id="loader" style="font-size: 30px;color:#OOO;text-align:center;">Bezig met laden...</p>
+            <img id="placeholder" class="placeholder" src="/static/img/placeholder.png" />
+        </div>
+      </div>
       <div id="soort_info">
         <div class="row" id="soort_info">
           <div class="col-md-4">
@@ -103,9 +110,10 @@
       </div>
       <div class= "row" id="soort_selector">
         <div class="col-md-12">
-          <img id="placeholder" class="placeholder" src="/static/img/placeholder.png" />
+
           <script>
           $("#soort_info").hide();
+          $("#loader").hide();
 
           var selectedSoort;
       	  function updateSoort(soort) {
@@ -121,6 +129,7 @@
                     renderTimeline(data);
                     updateTimeGraph(data, null, null);
                     updateBinmap(data);
+                    $("#loader").hide();
                     $("#soort_info").show();
                     //renderHeatMap();
                     //updateHeatMap(data);
