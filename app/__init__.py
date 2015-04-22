@@ -1,6 +1,5 @@
 import os
 from flask.ext.moresql import MoreSQL
-from flask.ext.cors import CORS
 from flask import Flask, render_template, request
 
 
@@ -11,7 +10,6 @@ if 'SECRET_KEY' in os.environ:
     app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 else:
     app.config['SECRET_KEY'] = 'this_should_be_configured'
-cors = CORS(app, resources={r"/data/*": {"origins": "*"}})
 
 
 ###
