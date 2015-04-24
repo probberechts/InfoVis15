@@ -324,6 +324,7 @@ form .row:first-child .floating-label-form-group {
 
 footer {
     color: #fff;
+    line-height: 8px;
 }
 
 footer h3 {
@@ -372,10 +373,4 @@ footer .footer-below {
 }
 
 
-.placeholder {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 100px;
-  margin-bottom: 100px;
-}
+

@@ -21,6 +21,55 @@
 
 {% block main %}
 <script>
+// update de geselecteerde soort
+var selectedSoort;
+function updateSoort(soort) {
+    selectedSoort = soort;
+    var start = "20050101";
+    var end = "20141231";
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/observaties/',
+        data: {"soort": soort, "start_date": start, "end_date": end},
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            renderTimeline(data);
+            updateTimeGraph(data, null, null);
+            binMap.update(data);
+            $("#loader").hide();
+            $("#soort_info").show();
+            //renderHeatMap();
+            //updateHeatMap(data);
+        }
+    });
+}
+
+// update het geselecteerde jaar
+var selectedYear;
+function updateYear(year) {
+    selectedYear = year;
+    var start = new Date(year, 0, 1);
+    var end = new Date(year, 11, 31);
+    Date.prototype.yyyymmdd = function() {
+        var yyyy = this.getFullYear().toString();
+        var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+        var dd  = this.getDate().toString();
+        return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+    };
+
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/observaties/',
+        data: {"soort": selectedSoort, "start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            updateTimeGraph(data, start, end);
+            //updateHeatMap(data);
+            binMap.update(data);
+        }
+    });
+}
+
 $(function() {
     // laad de vlinder soorten
     $.ajax({
@@ -45,55 +94,6 @@ $(function() {
         $("#placeholder").hide();
         $("#loader").show();
     });
-
-    // update de geselecteerde soort
-    var selectedSoort;
-    function updateSoort(soort) {
-        selectedSoort = soort;
-        var start = "20050101";
-        var end = "20141231";
-        $.ajax({
-            url: 'http://' + window.location.host + '/data/observaties/',
-            data: {"soort": soort, "start_date": start, "end_date": end},
-            dataType: "json",
-            contentType: "application/json",
-            success: function(data) {
-                renderTimeline(data);
-                updateTimeGraph(data, null, null);
-                binMap.update(data);
-                $("#loader").hide();
-                $("#soort_info").show();
-                //renderHeatMap();
-                //updateHeatMap(data);
-            }
-        });
-    }
-
-    // update het geselecteerde jaar
-    var selectedYear;
-    function updateYear(year) {
-        selectedYear = year;
-        var start = new Date(year, 0, 1);
-        var end = new Date(year, 11, 31);
-        Date.prototype.yyyymmdd = function() {
-            var yyyy = this.getFullYear().toString();
-            var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-            var dd  = this.getDate().toString();
-            return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
-        };
-
-        $.ajax({
-            url: 'http://' + window.location.host + '/data/observaties/',
-            data: {"soort": selectedSoort, "start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
-            dataType: "json",
-            contentType: "application/json",
-            success: function(data) {
-                updateTimeGraph(data, start, end);
-                //updateHeatMap(data);
-                binMap.upate(data);
-            }
-        });
-    }
 
     // indien een soort gedefinieerd is via URL parameters
     // wordt deze data onmiddlijk ingeladen

@@ -5,7 +5,8 @@ var binMap = (function () {
   // configuration
   var hexI = 15,
       numClasses = 8,
-      cbScheme = "GnBu";
+      cbScheme = "GnBu",
+	  bounds = [2.5,46.8,6,55];
 
   // local variables
   var po = org.polymaps,
@@ -20,6 +21,13 @@ var binMap = (function () {
 
     overviewMap.add(po.geoJson()
       .url("/static/js/bel2.json").tile(false).on("load", belTopoLoad));
+
+	overviewMap.extent(
+      [
+        { lat : bounds[1], lon : bounds[0] },
+        { lat : bounds[3], lon : bounds[2] }
+      ]
+    ).zoom(7.8);
 
     hexLayer = d3.select( "#overviewMap svg" ).insert( "svg:g" ).attr( "class", cbScheme );
 
@@ -38,7 +46,7 @@ var binMap = (function () {
                   + "/998/256/{Z}/{X}/{Y}.png")
       .hosts(["a.", "b.", "c.", ""])));
 
-    var focusHexLayer = d3.select( "#focusMap svg" ).insert( "svg:g" );
+	var focusHexLayer = d3.select( "#focusMap svg" ).insert( "svg:g" );
 
     focusNonHex = focusHexLayer.append( "svg:path" )
       .attr( "stroke", "none" )
@@ -53,6 +61,13 @@ var binMap = (function () {
       .attr( "fill", "none" );
 
     focusPointLayer = d3.select( "#focusMap svg" ).insert( "svg:g" );
+
+	focusMap.extent(
+      [
+        { lat : bounds[1], lon : bounds[0] },
+        { lat : bounds[3], lon : bounds[2] }
+      ]
+    ).zoom(7.8);
   };
 
   binMap.update = function( d ) {
@@ -62,24 +77,19 @@ var binMap = (function () {
     if (focusMap === undefined)
       binMap.create();
 
-    var bounds = [2.5,46.8,6,55];
+	var hexset = generate_hexgrid(data);
+    draw_hexgrid(hexset);
 
-    overviewMap.extent(
-      [
-        { lat : bounds[1], lon : bounds[0] },
-        { lat : bounds[3], lon : bounds[2] }
-      ]
-    ).zoom(7.8);
+	update_focusMap_points_by_map();
+  };
 
+  var resetZoom = function() {
     focusMap.extent(
       [
         { lat : bounds[1], lon : bounds[0] },
         { lat : bounds[3], lon : bounds[2] }
       ]
     ).zoom(11.6);
-
-    var hexset = generate_hexgrid(data);
-    draw_hexgrid(hexset);
   };
 
   var generate_hexgrid = function(data) {
@@ -141,9 +151,7 @@ var binMap = (function () {
         selectedBin = d3.select( this );
         selectedBin.attr( "stroke", "#f00" ).attr( "stroke-width", 2 );
         mouseOver = !mouseOver;
-        focusMap.zoom(12);
         on_overviewHex_highlight(d);
-
       })
       .on( "mouseout", function(d) {
         if (mouseOver) {
@@ -170,6 +178,9 @@ var binMap = (function () {
   };
 
   var on_overviewHex_highlight = function( hex ) {
+	// reset zoom
+	resetZoom();
+
     // center focus map on this hex
     center_focusMap_on_hex( hex );
 
@@ -177,7 +188,7 @@ var binMap = (function () {
     update_focusMap_hex( hex );
 
     // update focus points
-    update_focusMap_points_by_hex( hex );
+    //update_focusMap_points_by_hex( hex );
   };
 
   var center_focusMap_on_hex = function( hex ) {
