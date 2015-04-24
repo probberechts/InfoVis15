@@ -25,6 +25,25 @@
 var selectedSoort;
 function updateSoort(soort) {
     selectedSoort = soort;
+
+    // verzamel soort info
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/soort/',
+        data: {"soortnaam": soort},
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            $("#vlinder-img").attr("src", "/static/img/vlinders/" + soort.toLowerCase() + ".png")
+            $("#wiki").attr("href", data.wiki);
+            $("#latijns").text(data.naam_lat);
+            $("#familie").text(data.familie);
+            $("#habitat").text(data.habitat);
+            $("#info").text(data.tekst);
+            $("#soort_info").show();
+        }
+    });
+
+    // verzamel observaties
     var start = "20050101";
     var end = "20141231";
     $.ajax({
@@ -37,7 +56,6 @@ function updateSoort(soort) {
             updateTimeGraph(data, null, null);
             binMap.update(data);
             $("#loader").hide();
-            $("#soort_info").show();
             //renderHeatMap();
             //updateHeatMap(data);
         }
@@ -154,18 +172,17 @@ $(function() {
         <div id="soort_info" style="display: none;">
             <div class="row">
                 <div class="col-md-4">
-                    <img src="http://fc04.deviantart.net/fs70/f/2012/121/6/c/butterfly_png_by_angiekidrauhl-d4y8mit.png" alt="vlinder" class="img-rounded">
+                    <img id="vlinder-img" src="#" alt="vlinder" class="img-rounded">
                 </div>
                 <div class="col-md-7 offset-1">
                     <p>
-                    <a href="#"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Wikipedia</a>
+                    <a id="wiki" href="#"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Wikipedia</a>
                     </p>
                     <p>
-                    <strong>Familie:</strong> Nymphalidae<br/>
-                    <strong>Habitat:</strong> Grasland<br/>
-                    </p>
-                    <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    <strong>Latijnse naam:</strong> <span id="latijns">Onbekend</span><br/>
+                    <strong>Familie:</strong> <span id="familie">Onbekend</span><br/>
+                    <strong>Habitat:</strong> <span id="habitat">Onbekend</span><br/>
+                    </p><span id="info">Geen informatie beschikbaar.</span><p>
                     </p>
                 </div>
             </div>

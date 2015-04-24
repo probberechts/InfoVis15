@@ -43,6 +43,8 @@ def binmap():
 def heatmap():
     """Render heatmap."""
     return render_template('heatmap.html')
+
+
 ###
 # data API
 ###
@@ -94,6 +96,18 @@ def get_observaties():
 
 @app.route('/data/soorten/', methods=['GET'])
 def get_soorten():
+    return db.execute('get_soorten')
+
+
+@app.route('/data/soort/', methods=['GET'])
+def get_soort():
+    if request.values.get('soortnaam'):
+        modified_values = {
+            'soortnaam': request.values.get('soortnaam').title(),
+        }
+        return db.execute('get_soort',
+                          fields=['soortnaam'],
+                          values=modified_values)
     return db.execute('get_soorten')
 
 
