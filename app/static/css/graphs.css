@@ -1,5 +1,9 @@
-body {
-  font: 10px sans-serif;
+.placeholder {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  margin-bottom: 100px;
 }
 
 .axis path,
@@ -29,20 +33,16 @@ body {
   shape-rendering: crispEdges;
 }
 
-.soortSelector {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  background: #FAFAFA;
-  text-align: center;
-}
-
+/**
+ * For the heatmap
+ */
 #heatmap {
   max-width: 100%;
   height: 250px;
 }
 
 /**
- * For the location map
+ * For the scatter plot location map
  */
 .subunit-boundary {
   fill: none;

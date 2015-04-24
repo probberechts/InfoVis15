@@ -20,29 +20,28 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
+
 @app.route('/visualisatie')
 def visualisatie():
     """Render the visualisation."""
-    return render_template('vis.html')
+    return render_template('visualisatie.html')
+
 
 @app.route('/simplemap')
 def map():
-    """Render website's home page."""
+    """Render simple scatterplot of locations."""
     return render_template('scatterplot.html')
+
 
 @app.route('/binmap')
 def binmap():
-    """Render website's home page."""
-    return render_template('map.html')
+    """Render binmap"""
+    return render_template('binmap.html')
 
-@app.route('/binmap2')
-def binmap2():
-    """Render website's home page."""
-    return render_template('map2.html')
 
 @app.route('/heatmap')
 def heatmap():
-    """Render website's home page."""
+    """Render heatmap."""
     return render_template('heatmap.html')
 ###
 # data API

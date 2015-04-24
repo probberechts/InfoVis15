@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/css/libs/colorbrewer.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/libs/colorbrewer.stroke.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/libs/leaflet.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/graphs.css" />
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/libs/d3.js"></script>
+<script type="text/javascript" src="/static/js/libs/d3.hexbin.js"></script>
+<script type="text/javascript" src="/static/js/libs/d3.geo.js"></script>
+<script type="text/javascript" src="/static/js/libs/polymaps.js"></script>
+<script type="text/javascript" src="/static/js/libs/topojson.js"></script>
+<script type="text/javascript" src="/static/js/libs/leaflet.js"></script>
+<script type="text/javascript" src="/static/js/libs/leaflet-heat.js"></script>
+<script type="text/javascript" src="/static/js/libs/hex.js"></script>
+{% endblock %}
+
+
+{% block main %}
+<script>
+$(function() {
+    // laad de vlinder soorten
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/soorten/',
+        dataType: "json",
+        contentType: "application/json",
+        success: function(json) {
+            $.each(json, function(i, value) {
+                $('.searchbox')
+                    .append($('<option value="'
+                                + value.naam_nl
+                                + '">')
+                            .text(value.naam_nl));
+            });
+            $('.searchbox').selectize();
+        }
+    });
+
+    // een listener voor het kiezen van een andere soort
+    $(".searchbox").change( function() {
+        updateSoort($(this).val());
+        $("#placeholder").hide();
+        $("#loader").show();
+    });
+
+    // update de geselecteerde soort
+    var selectedSoort;
+    function updateSoort(soort) {
+        selectedSoort = soort;
+        var start = "20050101";
+        var end = "20141231";
+        $.ajax({
+            url: 'http://' + window.location.host + '/data/observaties/',
+            data: {"soort": soort, "start_date": start, "end_date": end},
+            dataType: "json",
+            contentType: "application/json",
+            success: function(data) {
+                renderTimeline(data);
+                updateTimeGraph(data, null, null);
+                binMap.update(data);
+                $("#loader").hide();
+                $("#soort_info").show();
+                //renderHeatMap();
+                //updateHeatMap(data);
+            }
+        });
+    }
+
+    // update het geselecteerde jaar
+    var selectedYear;
+    function updateYear(year) {
+        selectedYear = year;
+        var start = new Date(year, 0, 1);
+        var end = new Date(year, 11, 31);
+        Date.prototype.yyyymmdd = function() {
+            var yyyy = this.getFullYear().toString();
+            var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+            var dd  = this.getDate().toString();
+            return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+        };
+
+        $.ajax({
+            url: 'http://' + window.location.host + '/data/observaties/',
+            data: {"soort": selectedSoort, "start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
+            dataType: "json",
+            contentType: "application/json",
+            success: function(data) {
+                updateTimeGraph(data, start, end);
+                //updateHeatMap(data);
+                binMap.upate(data);
+            }
+        });
+    }
+
+    // indien een soort gedefinieerd is via URL parameters
+    // wordt deze data onmiddlijk ingeladen
+    var predefinedSort = getQueryParams(document.location.search).soort;
+    if (predefinedSort) {
+        $("#loader").show();
+        $(".searchbox").attr("placeholder", predefinedSort);
+        updateSoort(predefinedSort);
+        $("#placeholder").hide();
+    }
+
+    // leest parameters in de URL
+    function getQueryParams(qs) {
+        qs = qs.split("+").join(" ");
+
+        var params = {}, tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])]
+                = decodeURIComponent(tokens[2]);
+        } 
+
+        return params;
+    }
+
+});
+</script>
+<nav class="navbar navbar-default navbar-fixed-top visnav">
+    <div class="container">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
+        </div>
+
+        <div class="control-group" style="text-align:center;">
+            <select class="searchbox center form-control input-lg" placeholder="Kies een vlinder...">
+                <option></option>
+            </select>
+        </div>
+    </div>
+</nav>
+
+
+<section id="visualisation">
+    <div class="container">
+        <div class= "row">
+            <div class="col-md-12">
+                <p id="loader" style="font-size: 30px;color:#OOO;text-align:center;display:none;">Bezig met laden...</p>
+                <img id="placeholder" class="placeholder" src="/static/img/placeholder.png" />
+            </div>
+        </div>
+        <div id="soort_info" style="display: none;">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="http://fc04.deviantart.net/fs70/f/2012/121/6/c/butterfly_png_by_angiekidrauhl-d4y8mit.png" alt="vlinder" class="img-rounded">
+                </div>
+                <div class="col-md-7 offset-1">
+                    <p>
+                    <a href="#"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Wikipedia</a>
+                    </p>
+                    <p>
+                    <strong>Familie:</strong> Nymphalidae<br/>
+                    <strong>Habitat:</strong> Grasland<br/>
+                    </p>
+                    <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6 pull-left" id="timeline">
+                <script src="/static/js/graph_bigTimeline.js"></script>
+            </div>
+            <div class="col-xs-6" id="overviewMap" class="map">
+                <script src="/static/js/binmap.js"></script>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6" id="monthgraph">
+                <script src="/static/js/timelinechart.js"></script>
+            </div>
+            <div class="col-xs-6" id="focusMap" class="map">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

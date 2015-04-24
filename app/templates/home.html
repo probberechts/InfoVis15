@@ -8,113 +8,113 @@
 
 {% block main %}
 <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#page-top">Vlinderobservaties</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="/visualisatie">Visualisatie</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="#about">Meer info</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="#contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#page-top">Vlinderobservaties</a>
         </div>
-        <!-- /.container-fluid -->
-    </nav>
 
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <img class="img-responsive" src="/static/img/header.png" alt="">
-                    <div class="control-group">
-                      <select class="searchbox center form-control input-lg" placeholder="Kies een vlinder...">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
+                <li class="page-scroll">
+                    <a href="/visualisatie">Visualisatie</a>
+                </li>
+                <li class="page-scroll">
+                    <a href="#about">Meer info</a>
+                </li>
+                <li class="page-scroll">
+                    <a href="#contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <img class="img-responsive" src="/static/img/header.png" alt="">
+                <div class="control-group">
+                    <select class="searchbox center form-control input-lg" placeholder="Kies een vlinder...">
                         <option></option>
-                      </select>
-                      <script>
+                    </select>
+                    <script>
 
-                      $.ajax({
-                        url: 'http://' + window.location.host + '/data/soorten/',
-                        dataType: "json",
-                        contentType: "application/json",
-                        success: function(json) {
-                          $.each(json, function(i, value) {
-                            $('.searchbox')
-                              .append($('<option value="'
-                                                   + value.naam_nl
-                                                   + '">')
-                              .text(value.naam_nl));
-                          });
-                          $('.searchbox').selectize();
-                        }
-                      });
+$.ajax({
+    url: 'http://' + window.location.host + '/data/soorten/',
+    dataType: "json",
+    contentType: "application/json",
+    success: function(json) {
+        $.each(json, function(i, value) {
+            $('.searchbox')
+                .append($('<option value="'
+                            + value.naam_nl
+                            + '">')
+                        .text(value.naam_nl));
+        });
+        $('.searchbox').selectize();
+    }
+});
 
-                      $(".searchbox").change( function() {
-                        window.location.href = "/visualisatie?soort=" + $(this).val();
-                      });
-                      </script>
-                    </div>
+$(".searchbox").change( function() {
+    window.location.href = "/visualisatie?soort=" + $(this).val();
+});
+                    </script>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
-    <section id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>Over de visualisatie</h2>
-                    <hr class="star-primary">
-                </div>
+<section id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Over de visualisatie</h2>
+                <hr class="star-primary">
             </div>
-            <div class="row">
-              <div class="col-lg-8 col-lg-offset-2">
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si quicquam extra virtutem habeatur in bonis. Idque testamento cavebit is, qui nobis quasi oraculum ediderit nihil post mortem ad nos pertinere? Quasi ego id curem, quid ille aiat aut neget. Quare conare, quaeso. Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. </p>
                 <p>Homines optimi non intellegunt totam rationem everti, si ita res se habeat. Quid enim? Eaedem enim utilitates poterunt eas labefactare atque pervertere. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. </p>
-              </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- About Section -->
-    <section class="success" id="about2">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>Over de data</h2>
-                    <hr class="star-light">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 col-lg-offset-2">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si quicquam extra virtutem habeatur in bonis. Idque testamento cavebit is, qui nobis quasi oraculum ediderit nihil post mortem ad nos pertinere? Quasi ego id curem, quid ille aiat aut neget. Quare conare, quaeso. Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. </p>
-                </div>
-                <div class="col-lg-4">
-                  <p>Homines optimi non intellegunt totam rationem everti, si ita res se habeat. Quid enim? Eaedem enim utilitates poterunt eas labefactare atque pervertere. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. </p>
-                </div>
+<!-- About Section -->
+<section class="success" id="about2">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Over de data</h2>
+                <hr class="star-light">
             </div>
         </div>
-    </section>
+        <div class="row">
+            <div class="col-lg-4 col-lg-offset-2">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si quicquam extra virtutem habeatur in bonis. Idque testamento cavebit is, qui nobis quasi oraculum ediderit nihil post mortem ad nos pertinere? Quasi ego id curem, quid ille aiat aut neget. Quare conare, quaeso. Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. </p>
+            </div>
+            <div class="col-lg-4">
+                <p>Homines optimi non intellegunt totam rationem everti, si ita res se habeat. Quid enim? Eaedem enim utilitates poterunt eas labefactare atque pervertere. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. </p>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
