@@ -1,6 +1,7 @@
 function renderTimeline(data) {
       var allYears = [];
       var parseDate = d3.time.format("%Y-%m-%d").parse;
+      var selectedYear = 0;
 
       data.forEach(function(d) {
         var tempYear = parseDate(d.datum).getFullYear();
@@ -24,7 +25,8 @@ function renderTimeline(data) {
 
       var yearlyOcc = [];
       for( var i in  yearlyOccTemp ){
-        yearlyOcc.push([new Date(i, 0, 1), yearlyOccTemp[i]]);
+        if(i > 2007)
+          yearlyOcc.push([new Date(i, 0, 1), yearlyOccTemp[i]]);
         //yearlyOcc.push([i, yearlyOccTemp[i]]);
       }
       //console.log(yearlyOcc);
@@ -46,7 +48,7 @@ function renderTimeline(data) {
       var x = d3.time.scale().range([0, w]);
       var y = d3.scale.linear().range([h, 0]);
 
-      x.domain([new Date(2005, 0, 1), new Date(2014, 11, 31)]);
+      x.domain([new Date(2008, 0, 1), new Date(2014, 11, 31)]);
       //x.domain([2005, currentYear]);
       y.domain([0, d3.max(yearlyOcc, function(d) { return d[1]; })]);
 
@@ -59,11 +61,6 @@ function renderTimeline(data) {
           .orient("left")
           .ticks(10);
 
-      //brush no used anymore
-      /*var brush = d3.svg.brush()
-        .x(x)
-        .on("brush", brushed);*/
-
       svg.append("g")
           .attr("class", "x axis")
           .attr("transform", "translate(0," + h + ")")
@@ -72,7 +69,7 @@ function renderTimeline(data) {
           .style("text-anchor", "end")
           .attr("dx", "-.8em")
           .attr("dy", "-.55em")
-          .attr("transform", "rotate(-90)" );
+          .attr("transform", "translate(20,10)" );
 
       svg.append("g")
           .attr("class", "y axis")
@@ -90,32 +87,27 @@ function renderTimeline(data) {
           .enter().append("rect")
           .style("fill", "#18bc9c")
           .attr("class", "bar")
-          .attr("x", function(d) { return x(d[0]) - (w/yearlyOcc.length - 15)/2; })
-          .attr("width", w/yearlyOcc.length - 15)
+          .attr("x", function(d) { return x(d[0]) - (w/10 - 15)/2; })
+          .attr("width", w/10 - 15)
           .attr("y", function(d) { return y(d[1]); })
           .attr("height", function(d) { return h - y(d[1]); })
           .on("click", function(d) {
-            updateYear(d[0].getFullYear());
-            resetcolors();
-            d3.select(this).style("fill", "steelblue");
+            var clickedYear = d[0].getFullYear();
+            if(selectedYear != clickedYear) {
+              selectedYear = clickedYear;
+              updateYear(clickedYear);
+              resetcolors();
+              d3.select(this).style("fill", "steelblue");
+            } else {
+              //deselect year
+              selectedYear = 0;
+              resetcolors();
+              refresh();
+            }
           });
-
-      //brush not used anymore
-      /*svg.append("g")
-        .attr("class", "x brush")
-        .call(brush)
-        .selectAll("rect")
-        .attr("y", -6)
-        .attr("height", h + 7);*/
 
       function resetcolors() {
         svg.selectAll(".bar")
           .style("fill", "#18bc9c");
       }
-      /*function brushed() {
-        //http://bl.ocks.org/mbostock/1667367
-        //send selected dates to Tom's graph
-        var selectedDates = brush.extent();
-        updateTimeGraph(soort, selectedDates[0], selectedDates[1]);
-      }*/
 }
