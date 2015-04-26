@@ -25,10 +25,11 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.on("zoom", zooming)
 		.on("zoomend", zoomed);
 
-	d3.select("#svggraph").remove();
+	d3.select("#timeline-container").remove();
 	var svg = d3.select(div)
 		.append("div")
 		.classed("svg-container", true)
+		.attr("id", "timeline-container")
 		.append("svg")
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("viewBox", "0 0 600 300")

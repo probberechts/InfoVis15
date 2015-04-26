@@ -14,10 +14,11 @@ var barGraph = (function() {
 
 
 	barGraph.create = function() {
-	  d3.select("#timelinegraph").remove();
+		d3.select("#bargraph-container").remove();
 		svg = d3.select("#timeline")
 			.append("div")
 			.classed("svg-container", true)
+			.attr("id", "bargraph-container")
 			.append("svg")
 			.attr("preserveAspectRatio", "xMinYMin meet")
 			.attr("viewBox", "0 0 600 300")
@@ -115,9 +116,10 @@ var barGraph = (function() {
 		var data = [];
 		var j = 0;
 		for (var i = startYear; i <= endYear; i++) {
-			while(transformedData[j].key < startYear)
+			console.log(transformedData[j]);
+			while(j < transformedData.length && transformedData[j].key < startYear)
 				j++;
-			if (parseInt(transformedData[j].key) == i) {
+			if (j < transformedData.length && parseInt(transformedData[j].key) == i) {
 				data.push({
 					"year" : i,
 					"amounts" : transformedData[j].values
