@@ -54,7 +54,7 @@ function updateSoort(soort) {
         success: function(data) {
             renderTimeline(data);
             updateTimeGraph(data, null, null);
-            binMap.update(data);
+            binMap.updateData(data);
             $("#loader").hide();
             //renderHeatMap();
             //updateHeatMap(data);
@@ -83,7 +83,7 @@ function updateYear(year) {
         success: function(data) {
             updateTimeGraph(data, start, end);
             //updateHeatMap(data);
-            binMap.update(data);
+            binMap.updateData(data);
         }
     });
 }

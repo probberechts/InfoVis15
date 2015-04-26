@@ -10,7 +10,7 @@ var binMap = (function () {
 
   // local variables
   var po = org.polymaps,
-    overviewMap, focusMap, data, scale, countMax,
+    overviewMap, focusMap, originalData, data, scale, countMax,
     xMin, xMax, yMin, yMax,
     focusPointLayer, focusHex, focusNonHex, hexLayer,
     mouseOver = true, selectedBin;
@@ -70,10 +70,19 @@ var binMap = (function () {
     ).zoom(7.8);
   };
 
-  binMap.update = function( d ) {
+  binMap.updateData = function( d ) {
+    originalData = d;
+	update(d);
+  };
 
+  binMap.filterData = function( minDate, maxDate ) {
+	var filteredData = originalData.filter(function(d){return d3.time.format("%Y-%m-%d").parse(d.datum) >= minDate && d3.time.format("%Y-%m-%d").parse(d.datum) <= maxDate;});
+	update(filteredData);
+  };
+
+  var update = function( d ) {
     data = d;
-
+	
     if (focusMap === undefined)
       binMap.create();
 
@@ -81,6 +90,7 @@ var binMap = (function () {
     draw_hexgrid(hexset);
 
 	update_focusMap_points_by_map();
+
   };
 
   var resetZoom = function() {

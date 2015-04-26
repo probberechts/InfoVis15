@@ -22,7 +22,8 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.x(x)
 		//.y(y)
 		.scaleExtent([1, 256])
-		.on("zoom", zoomed);
+		.on("zoom", zooming)
+		.on("zoomend", zoomed);
 
 	d3.select("#svggraph").remove();
 	var svg = d3.select(div).append("svg")
@@ -74,14 +75,19 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.attr("class", "line")
 		.attr("d", line);
 
-	function zoomed() {
-	console.log(d3.event.scale);
+	function zooming() {
 		svg.select(".x.axis").call(xAxis);
 		svg.select(".y.axis").call(yAxis);
 		innerSvg.select(".line")
 			.attr("class", "line")
 			.attr("d", line);
-	};
+	}
+
+	function zoomed() {
+		minDate = x.domain()[0];
+		maxDate = x.domain()[1];
+		binMap.filterData(minDate, maxDate);
+	}
 }
 
 function getTTicks(minD, maxD){
@@ -109,7 +115,10 @@ function getTTimeFormat(minD, maxD){
 }
 
 function updateTimeGraph(data, minDate, maxDate){
-		data = d3.nest().key(function(d){return d.datum;}).rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});}).entries(data);
+		data = d3.nest()
+				.key(function(d){return d.datum;})
+				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
+				.entries(data);
 		data.forEach(function(d) {
 			d.key = d3.time.format("%Y-%m-%d").parse(d.key);
 			d.values = +d.values;
