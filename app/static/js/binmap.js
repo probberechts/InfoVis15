@@ -17,7 +17,16 @@ var binMap = (function () {
 
   binMap.create = function() {
     overviewMap = po.map()
-      .container( d3.select( "#overviewMap" ).append( "svg:svg" ).node() );
+      .container( 
+		d3.select( "#overviewMap" )
+			.append("div")
+			.classed("svg-container-map", true)
+			.append( "svg:svg" )
+			.attr("preserveAspectRatio", "xMinYMin meet")
+			.attr("viewBox", "0 0 600 300")
+			.classed("svg-content-responsive", true)
+			.node() 
+		);
 
     overviewMap.add(po.geoJson()
       .url("/static/js/bel2.json").tile(false).on("load", belTopoLoad));
@@ -32,7 +41,16 @@ var binMap = (function () {
     hexLayer = d3.select( "#overviewMap svg" ).insert( "svg:g" ).attr( "class", cbScheme );
 
     focusMap = po.map()
-      .container( d3.select( "#focusMap" ).append( "svg:svg" ).node() )
+      .container( 
+		d3.select( "#focusMap" )
+			.append("div")
+			.classed("svg-container-map", true)
+			.append( "svg:svg" )
+			.attr("preserveAspectRatio", "xMinYMin meet")
+			.attr("viewBox", "0 0 600 300")
+			.classed("svg-content-responsive", true)
+			.node()
+		)
       .add(po.interact())
       .add(po.hash())
       .on("move", function() {

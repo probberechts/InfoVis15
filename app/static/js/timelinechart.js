@@ -7,7 +7,7 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 	}
 	data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
 
-	var margin = {top: 20, right: 20, bottom: 70, left: 40},
+	var margin = {top: 20, right: 30, bottom: 70, left: 41},
 		width = 600 - margin.left - margin.right,
 		height = 300 - margin.top - margin.bottom;
 
@@ -26,19 +26,20 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.on("zoomend", zoomed);
 
 	d3.select("#svggraph").remove();
-	var svg = d3.select(div).append("svg")
+	var svg = d3.select(div)
+		.append("div")
+		.classed("svg-container", true)
+		.append("svg")
+		.attr("preserveAspectRatio", "xMinYMin meet")
+		.attr("viewBox", "0 0 600 300")
+		.classed("svg-content-responsive", true)
 		.attr("id", "svggraph")
-		.attr("width", width + margin.left + margin.right)
-		.attr("height", height + margin.top + margin.bottom)
 		.call(zoomtime)
 	  .append("g")
-		.attr("transform",
-			  "translate(" + margin.left + "," + margin.top + ")");
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	//necessary so that when zooming graph is not rendered outside of graph
-	var innerSvg = svg.append("svg")
-		.attr("width", width)
-		.attr("height", height);
+	var innerSvg = svg.append("svg");
 
 	var xAxis = d3.svg.axis()
 			.scale(x)
@@ -52,8 +53,8 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 	.selectAll("text")
 		.style("text-anchor", "end")
 		.attr("dx", "-.8em")
-		.attr("dy", "-.55em");
-		//.attr("transform", "rotate(-90)" );
+		.attr("dy", "-.55em")
+		.attr("transform", "translate(20,12)" );
 
 	var yAxis = d3.svg.axis()
 			.scale(y)

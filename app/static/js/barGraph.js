@@ -4,7 +4,7 @@ var barGraph = (function() {
 
 	// configuration
 	var startYear = 2008, endYear = 2014;
-	var margin = {top: 20, right: 20, bottom: 70, left: 60},
+	var margin = {top: 20, right: 20, bottom: 70, left: 41},
 		w = 600 - margin.left - margin.right,
 		h = 300 - margin.top - margin.bottom,
 		barPadding = 1;
@@ -15,10 +15,14 @@ var barGraph = (function() {
 
 	barGraph.create = function() {
 	  d3.select("#timelinegraph").remove();
-		svg = d3.select("#timeline").append("svg")
+		svg = d3.select("#timeline")
+			.append("div")
+			.classed("svg-container", true)
+			.append("svg")
+			.attr("preserveAspectRatio", "xMinYMin meet")
+			.attr("viewBox", "0 0 600 300")
+			.classed("svg-content-responsive", true)
 			.attr("id", "timelinegraph")
-			.attr("width", w + margin.left + margin.right)
-			.attr("height", h + margin.top + margin.bottom)
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	};
@@ -41,8 +45,6 @@ var barGraph = (function() {
 
 		var xAxis = d3.svg.axis()
 				.scale(x)
-				.tickSize(1)
-				.ticks(5)
 				.orient("bottom");
 
 		var yAxis = d3.svg.axis()
@@ -62,7 +64,6 @@ var barGraph = (function() {
 
 		svg.append("g")
 				.attr("class", "y axis")
-				.attr("transform", "translate(0,0)")
 				.call(yAxis)
 				.append("text")
 				.attr("transform", "rotate(-90)")

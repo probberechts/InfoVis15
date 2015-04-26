@@ -33,6 +33,28 @@
   shape-rendering: crispEdges;
 }
 
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-container-map {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
 /**
  * Bar chart
  */
@@ -84,16 +106,6 @@
 * Bin map
 **/
 @import url("http://polymaps.org/style.css");
-
-div .map {
-  min-width:560px;
-  max-width: 100%;
-  height: 250px;
-}
-
-svg {
-    display: block;
-}
 
 circle {
     stroke: yellow;
