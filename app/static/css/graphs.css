@@ -42,6 +42,7 @@
     overflow: hidden;
 }
 .svg-container-map {
+    cursor: move;
     display: inline-block;
     position: relative;
     width: 100%;
@@ -60,10 +61,19 @@
  */
 .bar {
   fill: steelblue;
+  cursor: pointer;
 }
 
 .activeBar {
   fill: #18bc9c;
+  cursor: pointer;
+}
+
+/**
+ * Line chart
+ */
+#timeline-container {
+    cursor: move;
 }
 
 /**
@@ -118,4 +128,8 @@ path.bel {
   stroke: #777;
   stroke-dasharray: 2,2;
   stroke-linejoin: round;
+}
+
+.GnBu {
+    cursor: pointer;
 }
