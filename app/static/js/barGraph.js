@@ -86,6 +86,7 @@ var barGraph = (function() {
 					if(selectedYear != clickedYear) {
 						selectedYear = clickedYear;
 						updateYear(clickedYear);
+						updateTimeGraph(selectedSoort, new Date(clickedYear,0,1), new Date(clickedYear+1,0,1));
 						svg.selectAll(".bar").attr("class", "bar");
 						d3.select(this).attr("class", "bar activeBar");
 					} else {
@@ -93,6 +94,7 @@ var barGraph = (function() {
 						selectedYear = 0;
 						svg.selectAll(".bar").attr("class", "bar activeBar");
 						updateSoort(selectedSoort);
+						updateTimeGraph(selectedSoort, null, null);
 					}
 				});
 	};
