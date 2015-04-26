@@ -52,7 +52,7 @@ function updateSoort(soort) {
         dataType: "json",
         contentType: "application/json",
         success: function(data) {
-            renderTimeline(data);
+            barGraph.update(data)
             updateTimeGraph(data, null, null);
             binMap.updateData(data);
             $("#loader").hide();
@@ -60,10 +60,6 @@ function updateSoort(soort) {
             //updateHeatMap(data);
         }
     });
-}
-
-function refresh() {
-    updateSoort(selectedSoort);
 }
 
 // update het geselecteerde jaar
@@ -195,7 +191,7 @@ $(function() {
 
         <div class="row">
             <div class="col-xs-6 pull-left" id="timeline">
-                <script src="/static/js/graph_bigTimeline.js"></script>
+                <script src="/static/js/barGraph.js"></script>
             </div>
             <div class="col-xs-6" id="overviewMap" class="map">
                 <script src="/static/js/binmap.js"></script>
