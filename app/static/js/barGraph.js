@@ -118,7 +118,6 @@ var barGraph = (function() {
 		var data = [];
 		var j = 0;
 		for (var i = startYear; i <= endYear; i++) {
-			console.log(transformedData[j]);
 			while(j < transformedData.length && transformedData[j].key < startYear)
 				j++;
 			if (j < transformedData.length && parseInt(transformedData[j].key) == i) {

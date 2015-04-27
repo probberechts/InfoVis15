@@ -31,7 +31,8 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 
 	var line = d3.svg.line()
 		.x(function(d) { return x(d.key); })
-		.y(function(d) { return y(d.values); });
+		.y(function(d) { return y(d.values); })
+		.interpolate("basis");
 
 	var zoomtime = d3.behavior.zoom()
 		.x(x)//only horizontal panning
