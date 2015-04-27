@@ -140,10 +140,10 @@ Date.prototype.getWeekNumber = function(){
     var d = new Date(+this);
     d.setHours(0,0,0);
     d.setDate(d.getDate()+4-(d.getDay()||7));
-    return Math.ceil((((d-new Date(d.getFullYear(),0,1))/8.64e7)+1)/7);
+    return String(d.getFullYear() + "-" + Math.ceil((((d-new Date(d.getFullYear(),0,1))/8.64e7)+1)/7));
 };//source=http://stackoverflow.com/questions/6117814/get-week-of-year-in-javascript-like-in-php
 
-function updateTimeGraph(data, minDate, maxDate){
+function updateTimeGraph(inputdata, minDate, maxDate){
 		//console.log(data);
 		/*for(d in data){
 			var dat = d3.time.format("%Y-%m-%d").parse(data[d].datum);
@@ -157,13 +157,24 @@ function updateTimeGraph(data, minDate, maxDate){
 		data = d3.nest()
 				.key(function(d){return d.datum;})
 				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
-				.entries(data);
-		//console.log(data);
+				.entries(inputdata);
+
+		weekSums = d3.nest()
+				.key(function(d){return  d3.time.format("%Y-%m-%d").parse(d.datum).getWeekNumber();})
+				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
+				.entries(inputdata);
+
+		var map = {}; // or var map = {};
+		weekSums.forEach( function( elem ) {
+			map[elem.key] = elem.values;
+		});
+
 		data.forEach(function(d) {
 			//console.log(d.key);
-			d.key = d3.time.format("%Y-%m-%d").parse(d.key);
+			d.key = d3.time.format("%Y-%m-%d").parse(d.key); 
+			var mapKey = d.key.getWeekNumber();
 			//console.log(d.key);
-			d.values = +d.values;
+			d.values = Math.round(map[mapKey] / 7);
 		});
 
 		data.sort(function(a,b){return a.key - b.key;});
