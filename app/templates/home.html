@@ -9,112 +9,177 @@
 {% block main %}
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#page-top">Vlinderobservaties</a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="hidden">
-                    <a href="#page-top"></a>
-                </li>
-                <li class="page-scroll">
-                    <a href="/visualisatie">Visualisatie</a>
-                </li>
-                <li class="page-scroll">
-                    <a href="#about">Meer info</a>
-                </li>
-                <li class="page-scroll">
-                    <a href="#contact">Contact</a>
-                </li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#page-top">Vlinderobservaties</a>
     </div>
-    <!-- /.container-fluid -->
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="hidden">
+          <a href="#page-top"></a>
+        </li>
+        <li class="page-scroll">
+          <a href="/visualisatie">Visualisatie</a>
+        </li>
+        <li class="page-scroll">
+          <a href="#about">Meer info</a>
+        </li>
+        <li class="page-scroll">
+          <a href="mailto:datachartists@gmail.com">Contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container-fluid -->
 </nav>
 
 <!-- Header -->
 <header>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <img class="img-responsive" src="/static/img/header.png" alt="">
-                <div class="control-group">
-                    <select class="searchbox center form-control input-lg" placeholder="Kies een vlinder...">
-                        <option></option>
-                    </select>
-                    <script>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <img class="img-responsive" src="/static/img/header.png" alt="">
+        <div class="control-group">
+          <select class="searchbox center form-control input-lg" placeholder="Kies een vlinder...">
+            <option></option>
+          </select>
+          <script>
 
 $.ajax({
-    url: 'http://' + window.location.host + '/data/soorten/',
-    dataType: "json",
-    contentType: "application/json",
-    success: function(json) {
-        $.each(json, function(i, value) {
-            $('.searchbox')
-                .append($('<option value="'
-                            + value.naam_nl
-                            + '">')
-                        .text(value.naam_nl));
-        });
-        $('.searchbox').selectize();
-    }
+  url: 'http://' + window.location.host + '/data/soorten/',
+  dataType: "json",
+  contentType: "application/json",
+  success: function(json) {
+    $.each(json, function(i, value) {
+      $('.searchbox')
+        .append($('<option value="'
+              + value.naam_nl
+              + '">')
+            .text(value.naam_nl));
+    });
+    $('.searchbox').selectize();
+  }
 });
 
 $(".searchbox").change( function() {
-    window.location.href = "/visualisatie?soort=" + $(this).val();
+  window.location.href = "/visualisatie?soort=" + $(this).val();
 });
-                    </script>
-                </div>
-            </div>
+          </script>
         </div>
+      </div>
     </div>
+  </div>
 </header>
 
 <section id="about">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h2>Over de visualisatie</h2>
-                <hr class="star-primary">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si quicquam extra virtutem habeatur in bonis. Idque testamento cavebit is, qui nobis quasi oraculum ediderit nihil post mortem ad nos pertinere? Quasi ego id curem, quid ille aiat aut neget. Quare conare, quaeso. Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. </p>
-                <p>Homines optimi non intellegunt totam rationem everti, si ita res se habeat. Quid enim? Eaedem enim utilitates poterunt eas labefactare atque pervertere. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. </p>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h2>Over de visualisatie</h2>
+        <hr class="star-primary">
+      </div>
     </div>
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <p class="text-justify">
+        Deze visualisatie werd ontwikkeld door Team Datachartists - dat zijn Pieter Robberechts, Kevin Keersmaekers en Tom Jorissen - in het
+        kader van het vak <a href="http://ariadne.cs.kuleuven.be/wiki/index.php/InfoVis-1414">Infomatievisualisatie</a> aan de KU Leuven. Ons doel is om data over observaties van
+        vlinders te visualiseren zodat deze begrijpbaar is voor de modale natuurliefhebber en toelaat om interessante
+        patronen te ontdekken in de verspreiding en evolutie van de Vlaamse vlinderpopulatie. Onze visualisatie bestaat
+        uit drie componenten die op een interactieve manier aan elkaar gekoppeld zijn.
+        </p>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-2">
+          <p>
+          <div class="thumbnail">
+            <div class="caption">
+              <h4>Aantal vlinders per jaar</h4>
+              <p>
+              Deze grafiek toont het aantal vlinders dat jaarlijks geobserveerd wordt.
+              Door op een balk te klikken kan je de data die weergegeven wordt in de overige grafieken 
+              filteren op dat jaar.
+              </p>
+            </div>
+            <img src="static/img/bars.png" class="img-responsive" />
+          </div>
+          </p><p>
+          <div class="thumbnail">
+            <div class="caption">
+              <h4>Detail aantal vlinders</h4>
+              <p>
+              Deze grafiek toont toont hoe het aantal vlinders evolueert in één jaar.
+              Om duidelijk de verschillende generaties te onderscheiden plotten we 
+              het gemiddeld aantal geobserveerde vlinders per week. Door verder in te 
+              zoomen op deze grafiek kan je de kaart rechts verder filteren op de 
+              weergegeven periode.
+              </p>
+            </div>
+            <img src="static/img/timeline.png" class="img-responsive" />
+          </div>
+
+          </p>
+        </div>
+        <div class="col-md-4">
+          <p>
+          <div class="thumbnail">
+            <div class="caption">
+              <h4>Verspreiding vlinders</h4>
+              <p>
+              Deze grafiek toont de ruimtelijke verspreiding van vlinders.
+              De bovenste binmap geeft een globaal overzicht van de verspreiding.
+              Door vakjes aan te klikken kan je de locaties in meer detail bekijken
+              op het kaartje onderaan.
+              </p>
+            </div>
+            <img src="static/img/map.png" class="img-responsive" />
+          </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- About Section -->
 <section class="success" id="about2">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h2>Over de data</h2>
-                <hr class="star-light">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-4 col-lg-offset-2">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si quicquam extra virtutem habeatur in bonis. Idque testamento cavebit is, qui nobis quasi oraculum ediderit nihil post mortem ad nos pertinere? Quasi ego id curem, quid ille aiat aut neget. Quare conare, quaeso. Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. </p>
-            </div>
-            <div class="col-lg-4">
-                <p>Homines optimi non intellegunt totam rationem everti, si ita res se habeat. Quid enim? Eaedem enim utilitates poterunt eas labefactare atque pervertere. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. </p>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h2>Over de data</h2>
+        <hr class="star-light">
+      </div>
     </div>
+    <div class="row">
+      <div class="col-lg-3 col-lg-offset-3">
+        <br/>
+        <br/>
+        <br/>
+        <img src="static/img/data.png" class="img-circle img-responsive center-block" />
+        <br/>
+        <br/>
+      </div>
+      <div class="col-lg-4">
+        <p class="text-justify">Onze dataset bestaat uit 561 380 observaties van 43 verschillende vlindersoorten tussen 2008 en 2014. 
+        De data is afkomstig van Natuurpunt vzw en is eveneens te raadplegen via <a href="http://waarnemingen.be">waarnemingen.be</a>.
+        Bij het interpreteren van onze visualisatie is het belangrijk om er rekening mee the houden dat het gaat
+        over het aantal waarnemingen en niet over het werkelijk aantal vlinders. De gegevens werden op geen enkele manier 
+        gecorrigeerd om een betere benadering van het werkelijke aantal vlinders te bekomen. Het is dus mogelijk dat op een 
+        bepaalde plaats eerder een actieve observator zit dan veel vlinders of dat zeldzame vlinders relatief vaker gemeld worden 
+        dan de vaakvoorkomende soorten.
+      </div>
+
+    </div>
+  </div>
 </section>
 {% endblock %}
