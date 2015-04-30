@@ -5,7 +5,7 @@ var binMap = (function () {
   // configuration
   var hexI = 15,
       numClasses = 8,
-      cbScheme = "GnBu",
+      cbScheme = "Greens",
 	  bounds = [2.5,46.8,6,55];
 
   // local variables
