@@ -111,6 +111,21 @@ def get_soort():
     return db.execute('get_soorten')
 
 
+@app.route('/data/weer/tmin', methods=['GET'])
+def get_tmin():
+    return db.execute('get_tmin')
+
+
+@app.route('/data/weer/tmax', methods=['GET'])
+def get_tmax():
+    return db.execute('get_tmax')
+
+
+@app.route('/data/weer/neerslag', methods=['GET'])
+def get_neerslag():
+    return db.execute('get_neerslag')
+
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
