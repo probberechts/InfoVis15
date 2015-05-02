@@ -44,7 +44,7 @@ function updateSoort(soort) {
     });
 
     // verzamel observaties
-    var start = "20050101";
+    var start = "20080101";
     var end = "20141231";
     $.ajax({
         url: 'http://' + window.location.host + '/data/observaties/',
@@ -60,13 +60,23 @@ function updateSoort(soort) {
             //updateHeatMap(data);
         }
     });
+
+    // laad de temperatuur
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/weer/tmax',
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            updateWeatherGraph(data, null, null);
+        }
+    });
 }
 
 // update het geselecteerde jaar
 var selectedYear;
 function updateYear(year) {
     selectedYear = year;
-    var start = new Date(year, 0, 1);
+    var start = new Date(year, 0, 0);
     var end = new Date(year, 11, 31);
     Date.prototype.yyyymmdd = function() {
         var yyyy = this.getFullYear().toString();
@@ -84,6 +94,17 @@ function updateYear(year) {
             updateTimeGraph(data, start, end);
             //updateHeatMap(data);
             binMap.updateData(data);
+        }
+    });
+
+    //update temperatuur
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/weer/tmax',
+        data: {"start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            updateWeatherGraph(data, start, end);
         }
     });
 }
@@ -203,6 +224,12 @@ $(function() {
                 <script src="/static/js/timelinechart.js"></script>
             </div>
             <div class="col-md-6" id="focusMap" class="map">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6" id="weathergraph">
+                <script src="/static/js/weathergraph.js"></script>
             </div>
         </div>
     </div>

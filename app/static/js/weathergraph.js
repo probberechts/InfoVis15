@@ -13,7 +13,7 @@ var be_nl = d3.locale({
 			  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 		  });
 
-function renderTimeLineChart(div, origdata, minDate, maxDate){
+function renderWeatherChart(div, origdata, minDate, maxDate){
 
 	if(minDate == null || maxDate == null){
 		domm = d3.extent(origdata, function(d){ return d.key; });
@@ -40,11 +40,11 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.on("zoom", zooming)
 		.on("zoomend", zoomed);
 
-	d3.select("#timeline-container").remove();
+	d3.select("#weather-container").remove();
 	var svg = d3.select(div)
 		.append("div")
 		.classed("svg-container", true)
-		.attr("id", "timeline-container")
+		.attr("id", "weather-container")
 		.append("svg")
 		.attr("preserveAspectRatio", "xMinYMin meet")
 		.attr("viewBox", "0 0 600 300")
@@ -144,38 +144,50 @@ Date.prototype.getWeekNumber = function(){
     return String(d.getFullYear() + "-" + Math.ceil((((d-new Date(d.getFullYear(),0,1))/8.64e7)+1)/7));
 };//source=http://stackoverflow.com/questions/6117814/get-week-of-year-in-javascript-like-in-php
 
-function updateTimeGraph(inputdata, minDate, maxDate){
-		//console.log(inputdata);
-		/*for(d in data){
-			var dat = d3.time.format("%Y-%m-%d").parse(data[d].datum);
-			data[d].weekyr = dat.getWeekNumber()+"-"+dat.getFullYear();
-			//console.log(data[d]);
-		}*/
-		/*data.forEach(function(d){
-			var dat = d3.time.format("%Y-%m-%d").parse(d.datum);
-			d.weekyr = dat.getWeekNumber()+"-"+dat.getFullYear();
-		});*/
-		data = d3.nest()
-				.key(function(d){return d.datum;})
-				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
-				.entries(inputdata);
+Date.prototype.getWeekNumberWeek = function(){
+    var d = new Date(+this);
+    d.setHours(0,0,0);
+    d.setDate(d.getDate()+4-(d.getDay()||7));
+    return String(Math.ceil((((d-new Date(d.getFullYear(),0,1))/8.64e7)+1)/7));
+};
 
-		weekSums = d3.nest()
-				.key(function(d){return  d3.time.format("%Y-%m-%d").parse(d.datum).getWeekNumber();})
-				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
-				.entries(inputdata);
+function getAllDays(startDate, endDate) {
+	var a = [];
 
-		var map = {}; // or var map = {};
-		weekSums.forEach( function( elem ) {
-			map[elem.key] = elem.values;
-		});
+    while(startDate < endDate) {
+        a.push(startDate);
+        startDate = new Date(startDate.setDate(
+            startDate.getDate() + 1
+        ))
+    }
 
-		data.forEach(function(d) {
-			//console.log(d.key);
-			d.key = d3.time.format("%Y-%m-%d").parse(d.key); 
-			var mapKey = d.key.getWeekNumber();
-			//console.log(d.key);
-			d.values = Math.round(map[mapKey] / 7);
+    return a;
+}
+
+function updateWeatherGraph(inputdata, minDate, maxDate){
+		//console.log(inputdata[0].tmax);
+		//van: week: 0, jaar: 2008, tmax: 8.8
+		//naar: aantal, datum
+
+		var start = minDate;
+    	var end = maxDate;
+    	if(minDate == null || maxDate == null) {
+    		start = new Date(2008, 0, 0);
+    		end = new Date(2014, 11, 31);
+    	}
+    	var alldays = getAllDays(start, end);
+    	//console.log(start + " tot " + end);
+		//console.log(alldays[15].getWeekNumber());
+
+		var data = [];
+		var i = 0;
+		while(inputdata[i].jaar < alldays[0].getFullYear())
+			i++;
+		alldays.forEach(function(date) {
+			if(inputdata[i].jaar < date.getFullYear() || inputdata[i].week < date.getWeekNumberWeek())
+				i++;
+			var obj = {key: date, values: inputdata[i].tmax};
+			data.push(obj);
 		});
 
 		data.sort(function(a,b){return a.key - b.key;});
@@ -183,6 +195,6 @@ function updateTimeGraph(inputdata, minDate, maxDate){
 			if(d.key > new Date())//filter out impossible dates, TODO remove these from the DB
 				d.key = null;
 		});
-
-		renderTimeLineChart("#monthgraph", data, minDate, maxDate);
+		renderWeatherChart("#weathergraph", data, minDate, maxDate);
 }
+
