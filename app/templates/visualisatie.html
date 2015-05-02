@@ -61,15 +61,7 @@ function updateSoort(soort) {
         }
     });
 
-    // laad de temperatuur
-    $.ajax({
-        url: 'http://' + window.location.host + '/data/weer/tmax',
-        dataType: "json",
-        contentType: "application/json",
-        success: function(data) {
-            updateWeatherGraph(data, null, null);
-        }
-    });
+    
 }
 
 // update het geselecteerde jaar
@@ -105,6 +97,18 @@ function updateYear(year) {
         contentType: "application/json",
         success: function(data) {
             updateWeatherGraph(data, start, end);
+        }
+    });
+}
+
+function updateTemp() {
+    // update de temperatuur
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/weer/tmax',
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            updateWeatherGraph(data, null, null);
         }
     });
 }
@@ -158,6 +162,16 @@ $(function() {
 
         return params;
     }
+
+    // laad de temperatuur
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/weer/tmax',
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            updateWeatherGraph(data, null, null);
+        }
+    });
 
 });
 </script>

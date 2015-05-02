@@ -94,6 +94,7 @@ var barGraph = (function() {
 						svg.selectAll(".bar").attr("class", "bar activeBar");
 						updateSoort(selectedSoort);
 						updateTimeGraph(selectedSoort, null, null);
+						updateTemp();
 					}
 				});
 	};
