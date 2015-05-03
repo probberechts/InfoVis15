@@ -22,11 +22,17 @@ function renderTimeLineChart(div, data){
 	var margin = {top: 20, right: 30, bottom: 70, left: 41},
 		width = 600 - margin.left - margin.right,
 		height = 300 - margin.top - margin.bottom;
-
+		console.log(data);
+	var max = 0;
+	data.forEach(function(d){
+		var m = d3.max(d, function(d2){
+			return d2.values;
+		});
+		if(m > max)
+			max = m;
+	});
 	var x = d3.time.scale().domain([minDate, maxDate]).range([0, width]);
-	var y = d3.scale.linear().domain([0, 40/*d3.max(data, function(d) { //TODO
-		return d.values;
-	})+10*/]).range([height, 0]);
+	var y = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([height, 0]);
 	var line = d3.svg.line()
 		.x(function(d) { return x(d.key); })
 		.y(function(d) { return y(d.values); })
