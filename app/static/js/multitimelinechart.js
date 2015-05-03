@@ -14,10 +14,9 @@ var be_nl = d3.locale({
 		  });
 
 function renderTimeLineChart(div, data){
-
+	var mouseOver = true;
 	var minDate = new Date(2000,0,1); 
 	var maxDate = new Date(2000,11,31);
-	//data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
 
 	var margin = {top: 20, right: 30, bottom: 70, left: 41},
 		width = 600 - margin.left - margin.right,
@@ -96,8 +95,42 @@ function renderTimeLineChart(div, data){
 		.datum(d)
 		.attr("class", "line")
 		.attr("id", "line"+d[0].jaar)
-		//.style("stroke", "#d3d3d3")
-		.attr("d", line);
+		.attr("d", line)
+		.on("mouseover", function(){
+			if(mouseOver){
+				d3.select(this).attr("class", "active-line");
+				var clickedYear = d3.select(this).attr("id").substring(4);
+				d3.selectAll(".bar").attr("class", "bar");
+				d3.select("#bar"+clickedYear).attr("class", "bar activeBar");
+			}
+		})
+		.on("mouseout", function(){
+			if(mouseOver){
+				d3.select(this).attr("class", "line");
+				d3.selectAll(".bar").attr("class", "bar activeBar");
+			}
+		})
+		.on("click", function(){
+			if(!mouseOver)
+				d3.select(this).attr("class", "active-line");
+			var clickedYear = d3.select(this).attr("id").substring(4);
+			mouseOver = !mouseOver;
+			if(selectedYear != clickedYear) {
+				d3.select("#line"+selectedYear).attr("class", "line");
+				selectedYear = clickedYear;
+				updateYear(clickedYear);
+				d3.selectAll(".bar").attr("class", "bar");
+				d3.select("#bar"+clickedYear).attr("class", "bar activeBar");
+				d3.select("#line"+clickedYear).attr("class", "active-line");
+			}else{
+				//deselect year
+				d3.select("#line"+selectedYear).attr("class", "line");
+				selectedYear = 0;
+				d3.selectAll(".bar").attr("class", "bar activeBar");
+				updateSoort(selectedSoort);
+				updateTemp();
+			}
+		});
 	});
 	
 	

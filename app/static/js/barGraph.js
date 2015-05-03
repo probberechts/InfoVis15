@@ -1,3 +1,5 @@
+var selectedYear = 0;//now global because used in other graphs
+
 var barGraph = (function() {
 	
 	var barGraph = {};
@@ -10,7 +12,7 @@ var barGraph = (function() {
 		barPadding = 1;
 
 	// local variables
-	var svg, selectedYear = 0;
+	var svg;
 
 
 	barGraph.create = function() {
@@ -77,6 +79,7 @@ var barGraph = (function() {
 				.data(yearlyOcc)
 				.enter().append("rect")
 				.attr("class", "bar activeBar")
+				.attr("id", function(d){return "bar"+d.year;})
 				.attr("x", function(d) { return x(d.year);})
 				.attr("width", x.rangeBand())
 				.attr("y", function(d) { return y(d.amounts); })
@@ -90,7 +93,6 @@ var barGraph = (function() {
 						svg.selectAll(".bar").attr("class", "bar");
 						d3.select(this).attr("class", "bar activeBar");
 						d3.select("#line"+clickedYear).attr("class", "active-line");
-						console.log("nw cl: "+d3.select("#line"+selectedYear).attr("class"));
 					} else {
 						//deselect year
 						d3.select("#line"+selectedYear).attr("class", "line");
