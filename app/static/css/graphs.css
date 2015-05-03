@@ -23,6 +23,12 @@
 
 .line {
   fill: none;
+  stroke: #d3d3d3;
+  stroke-width: 1.5px;
+}
+
+.active-line {
+  fill: none;
   stroke: #18bc9c;
   stroke-width: 1.5px;
 }

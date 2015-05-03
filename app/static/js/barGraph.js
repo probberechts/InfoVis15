@@ -84,16 +84,16 @@ var barGraph = (function() {
 				.on("click", function(d) {
 					var clickedYear = d.year;
 					if(selectedYear != clickedYear) {
+						d3.select("#line"+selectedYear).attr("class", "line");
 						selectedYear = clickedYear;
 						updateYear(clickedYear);
 						svg.selectAll(".bar").attr("class", "bar");
 						d3.select(this).attr("class", "bar activeBar");
-						d3.select("#line"+selectedYear).style("stroke", "#d3d3d3");
-						d3.select("#line"+clickedYear).style("stroke", "#18bc9c");
+						d3.select("#line"+clickedYear).attr("class", "active-line");
 						console.log("nw cl: "+d3.select("#line"+selectedYear).attr("class"));
 					} else {
 						//deselect year
-						d3.select("#line"+selectedYear).style("stroke", "#d3d3d3");
+						d3.select("#line"+selectedYear).attr("class", "line");
 						selectedYear = 0;
 						svg.selectAll(".bar").attr("class", "bar activeBar");
 						updateSoort(selectedSoort);

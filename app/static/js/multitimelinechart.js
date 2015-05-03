@@ -90,6 +90,7 @@ function renderTimeLineChart(div, data){
 		.datum(d)
 		.attr("class", "line")
 		.attr("id", "line"+d[0].jaar)
+		//.style("stroke", "#d3d3d3")
 		.attr("d", line);
 	});
 	
