@@ -88,12 +88,16 @@ var barGraph = (function() {
 						updateYear(clickedYear);
 						svg.selectAll(".bar").attr("class", "bar");
 						d3.select(this).attr("class", "bar activeBar");
+						d3.select("#line"+selectedYear).style("stroke", "#d3d3d3");
+						d3.select("#line"+clickedYear).style("stroke", "#18bc9c");
+						console.log("nw cl: "+d3.select("#line"+selectedYear).attr("class"));
 					} else {
 						//deselect year
+						d3.select("#line"+selectedYear).style("stroke", "#d3d3d3");
 						selectedYear = 0;
 						svg.selectAll(".bar").attr("class", "bar activeBar");
 						updateSoort(selectedSoort);
-						updateTimeGraph(selectedSoort, null, null);
+						//updateTimeGraph(selectedSoort, null, null);
 						updateTemp();
 					}
 				});

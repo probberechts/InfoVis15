@@ -13,22 +13,20 @@ var be_nl = d3.locale({
 			  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 		  });
 
-function renderTimeLineChart(div, origdata, minDate, maxDate){
+function renderTimeLineChart(div, data){
 
-	if(minDate == null || maxDate == null){
-		domm = d3.extent(origdata, function(d){ return d.key; });
-		minDate = domm[0];
-		maxDate = domm[1];
-	}
-	data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
+	var minDate = new Date(2000,0,1); 
+	var maxDate = new Date(2000,11,31);
+	//data = origdata.filter(function(d){return d.key >= minDate && d.key <= maxDate;});
 
 	var margin = {top: 20, right: 30, bottom: 70, left: 41},
 		width = 600 - margin.left - margin.right,
 		height = 300 - margin.top - margin.bottom;
 
 	var x = d3.time.scale().domain([minDate, maxDate]).range([0, width]);
-	var y = d3.scale.linear().domain([0, d3.max(data, function(d) { return d.values; })+10]).range([height, 0]);
-
+	var y = d3.scale.linear().domain([0, 40/*d3.max(data, function(d) { //TODO
+		return d.values;
+	})+10*/]).range([height, 0]);
 	var line = d3.svg.line()
 		.x(function(d) { return x(d.key); })
 		.y(function(d) { return y(d.values); })
@@ -50,18 +48,17 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.attr("viewBox", "0 0 600 300")
 		.classed("svg-content-responsive", true)
 		.attr("id", "svggraph")
-		.call(zoomtime)
+		//.call(zoomtime)
 	  .append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	//necessary so that when zooming graph is not rendered outside of graph
 	var innerSvg = svg.append("svg");
-	var bla = maxDate;
 	var xAxis = d3.svg.axis()
 			.scale(x)
 			.orient("bottom")
-			.ticks(5)
-			.tickFormat(getTTimeFormat(minDate,maxDate));
+			.ticks(getTTicks2(minDate,maxDate))
+			.tickFormat(getTTimeFormat2(minDate,maxDate));
 
 	svg.append("g")
 		.attr("class", "x axis")
@@ -88,15 +85,20 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 		.style("text-anchor", "end")
 		.text("Aantal");
 
-	innerSvg.append("path")
-		.datum(data)
+	data.forEach(function(d){
+		innerSvg.append("path")
+		.datum(d)
 		.attr("class", "line")
+		.attr("id", "line"+d[0].jaar)
 		.attr("d", line);
+	});
+	
+	
 
 	function zooming() {
 		var t = zoomtime.translate();
 		zoomtime.translate([Math.min(t[0], 0), Math.max(t[0], 100)]);
-		xAxis.tickFormat(getTTimeFormat(x.domain()[0],x.domain()[1]));
+		xAxis.tickFormat(getTTimeFormat2(x.domain()[0],x.domain()[1]));
 		svg.select(".x.axis").call(xAxis);
 		y = y.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
 		yAxis.scale(y);
@@ -113,28 +115,22 @@ function renderTimeLineChart(div, origdata, minDate, maxDate){
 	}
 }
 
-function getTTicks(minD, maxD){
-	var maanden = (maxDate-minDate)/1000/60/60/24/30;
-	var jaren = (maxDate-minDate)/1000/60/60/24/365;
+function getTTicks2(minD, maxD){
+	var maanden = (maxD-minD)/1000/60/60/24/30;
 	//aantal maanden/jaren om van view te wisselen needs tweaking
 	if(maanden < 3)
 		return d3.time.days;
-	else if(jaren > 4)
-		return d3.time.years;
 	else
 		return d3.time.months;
 }
 
-function getTTimeFormat(minD, maxD){
+function getTTimeFormat2(minD, maxD){
 	var maanden = (maxD-minD)/1000/60/60/24/30;
-	var jaren = (maxD-minD)/1000/60/60/24/365;
-	//aantal maanden/jaren om van view te wisselen needs tweaking
+	//aantal maanden om van view te wisselen needs tweaking
 	if(maanden < 3)
-		return be_nl.timeFormat("%d-%m-%Y");
-	else if(jaren > 4)
-		return be_nl.timeFormat("%Y");
+		return be_nl.timeFormat("%d-%m");
 	else
-		return be_nl.timeFormat("%b-%Y");
+		return be_nl.timeFormat("%b");
 }
 
 Date.prototype.getWeekNumber = function(){
@@ -145,16 +141,7 @@ Date.prototype.getWeekNumber = function(){
 };//source=http://stackoverflow.com/questions/6117814/get-week-of-year-in-javascript-like-in-php
 
 function updateTimeGraph(inputdata, minDate, maxDate){
-		//console.log(inputdata);
-		/*for(d in data){
-			var dat = d3.time.format("%Y-%m-%d").parse(data[d].datum);
-			data[d].weekyr = dat.getWeekNumber()+"-"+dat.getFullYear();
-			//console.log(data[d]);
-		}*/
-		/*data.forEach(function(d){
-			var dat = d3.time.format("%Y-%m-%d").parse(d.datum);
-			d.weekyr = dat.getWeekNumber()+"-"+dat.getFullYear();
-		});*/
+
 		data = d3.nest()
 				.key(function(d){return d.datum;})
 				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
@@ -165,16 +152,14 @@ function updateTimeGraph(inputdata, minDate, maxDate){
 				.rollup(function(d){ return d3.sum(d, function(g) {return +g.aantal;});})
 				.entries(inputdata);
 
-		var map = {}; // or var map = {};
+		var map = {};
 		weekSums.forEach( function( elem ) {
 			map[elem.key] = elem.values;
 		});
 
 		data.forEach(function(d) {
-			//console.log(d.key);
 			d.key = d3.time.format("%Y-%m-%d").parse(d.key); 
 			var mapKey = d.key.getWeekNumber();
-			//console.log(d.key);
 			d.values = Math.round(map[mapKey] / 7);
 		});
 
@@ -184,5 +169,13 @@ function updateTimeGraph(inputdata, minDate, maxDate){
 				d.key = null;
 		});
 
-		renderTimeLineChart("#monthgraph", data, minDate, maxDate);
+		var data2 = [];
+		data.forEach(function(d){
+			d.jaar = d.key.getFullYear();
+			d.key.setFullYear(2000);
+			if(!(d.jaar in data2))
+				data2[d.jaar] = new Array();
+			data2[d.jaar].push(d);
+		});
+		renderTimeLineChart("#monthgraph", data2);
 }

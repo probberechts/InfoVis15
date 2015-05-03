@@ -83,7 +83,7 @@ function updateYear(year) {
         dataType: "json",
         contentType: "application/json",
         success: function(data) {
-            updateTimeGraph(data, start, end);
+            //updateTimeGraph(data, start, end);
             //updateHeatMap(data);
             binMap.updateData(data);
         }
@@ -235,7 +235,7 @@ $(function() {
 
         <div class="row">
             <div class="col-md-6" id="monthgraph">
-                <script src="/static/js/timelinechart.js"></script>
+                <script src="/static/js/multitimelinechart.js"></script>
             </div>
             <div class="col-md-6" id="focusMap" class="map">
             </div>
