@@ -52,20 +52,26 @@ function updateSoort(soort) {
         dataType: "json",
         contentType: "application/json",
         success: function(data) {
-            barGraph.update(data)
-            updateTimeGraph(data, null, null);
-            binMap.updateData(data);
+            // verzamel weer data
+            $.ajax({
+                url: 'http://' + window.location.host + '/data/weer/tmax',
+                dataType: "json",
+                contentType: "application/json",
+                success: function(weatherdata) {
+                    barGraph.update(data);
+                    monthGraph.update(data, weatherdata);
+                    binMap.updateData(data);
+                }
+            });
             $("#loader").hide();
             //renderHeatMap();
             //updateHeatMap(data);
         }
     });
-
-    
 }
 
 // update het geselecteerde jaar
-var selectedYear;
+var selectedYear = 0;
 function updateYear(year) {
     selectedYear = year;
     var start = new Date(year, 0, 0);
@@ -86,29 +92,6 @@ function updateYear(year) {
             //updateTimeGraph(data, start, end);
             //updateHeatMap(data);
             binMap.updateData(data);
-        }
-    });
-
-    //update temperatuur
-    $.ajax({
-        url: 'http://' + window.location.host + '/data/weer/tmax',
-        data: {"start_date": start.yyyymmdd(), "end_date": end.yyyymmdd()},
-        dataType: "json",
-        contentType: "application/json",
-        success: function(data) {
-            updateWeatherGraph(data, start, end);
-        }
-    });
-}
-
-function updateTemp() {
-    // update de temperatuur
-    $.ajax({
-        url: 'http://' + window.location.host + '/data/weer/tmax',
-        dataType: "json",
-        contentType: "application/json",
-        success: function(data) {
-            updateWeatherGraph(data, null, null);
         }
     });
 }
@@ -158,20 +141,10 @@ $(function() {
         while (tokens = re.exec(qs)) {
             params[decodeURIComponent(tokens[1])]
                 = decodeURIComponent(tokens[2]);
-        } 
+        }
 
         return params;
     }
-
-    // laad de temperatuur
-    $.ajax({
-        url: 'http://' + window.location.host + '/data/weer/tmax',
-        dataType: "json",
-        contentType: "application/json",
-        success: function(data) {
-            updateWeatherGraph(data, null, null);
-        }
-    });
 
 });
 </script>
@@ -238,12 +211,6 @@ $(function() {
                 <script src="/static/js/multitimelinechart.js"></script>
             </div>
             <div class="col-md-6" id="focusMap" class="map">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6" id="weathergraph">
-                <script src="/static/js/weathergraph.js"></script>
             </div>
         </div>
     </div>

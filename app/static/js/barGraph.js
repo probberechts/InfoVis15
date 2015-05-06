@@ -1,7 +1,7 @@
 var selectedYear = 0;//now global because used in other graphs
 
 var barGraph = (function() {
-	
+
 	var barGraph = {};
 
 	// configuration
@@ -84,23 +84,36 @@ var barGraph = (function() {
 				.attr("width", x.rangeBand())
 				.attr("y", function(d) { return y(d.amounts); })
 				.attr("height", function(d) { return h - y(d.amounts); })
+				.on("mouseover", function(){
+						var hoveredBar = d3.select(this);
+						if (!hoveredBar.classed("activeBar")) {
+							var hoveredYear = d3.select(this).attr("id").substring(3);
+							d3.selectAll("#bar"+hoveredYear).attr("class", "highlightedBar");
+							d3.selectAll("#line"+hoveredYear).attr("class", "highlightedLine");
+						}
+				})
+				.on("mouseout", function(){
+					var hoveredBar = d3.select(this);
+					if (!hoveredBar.classed("activeBar")) {
+						d3.selectAll(".highlightedBar").attr("class", "bar");
+						d3.selectAll(".highlightedLine").attr("class", "line");
+					}
+				})
 				.on("click", function(d) {
 					var clickedYear = d.year;
 					if(selectedYear != clickedYear) {
-						d3.select("#line"+selectedYear).attr("class", "line");
 						selectedYear = clickedYear;
 						updateYear(clickedYear);
-						svg.selectAll(".bar").attr("class", "bar");
-						d3.select(this).attr("class", "bar activeBar");
-						d3.select("#line"+clickedYear).attr("class", "active-line");
+						d3.selectAll(".activeLine").attr("class", "line");
+						svg.selectAll(".activeBar").attr("class", "bar");
+						d3.select(this).attr("class", "activeBar");
+						d3.selectAll("#line"+clickedYear).attr("class", "activeLine");
 					} else {
 						//deselect year
-						d3.select("#line"+selectedYear).attr("class", "line");
+						d3.selectAll(".activeLine").attr("class", "line");
 						selectedYear = 0;
-						svg.selectAll(".bar").attr("class", "bar activeBar");
+						svg.selectAll(".bar").attr("class", "activeBar");
 						updateSoort(selectedSoort);
-						//updateTimeGraph(selectedSoort, null, null);
-						updateTemp();
 					}
 				});
 	};
@@ -114,12 +127,12 @@ var barGraph = (function() {
 	var prepareData = function( rawData ) {
 		// group amount of butterflies observed each year
 		var transformedData = d3.nest()
-					.key(function(d) { 
+					.key(function(d) {
 						return parseYear(d.datum);
-					}).rollup(function(d) { 
+					}).rollup(function(d) {
 					   return d3.sum(d, function(g) {return g.aantal; });
 					}).entries(rawData);
-		
+
 		// rename keys and add missing years
 		var data = [];
 		var j = 0;
@@ -141,7 +154,7 @@ var barGraph = (function() {
 		}
 
 		return data;
-	}; 
+	};
 
 
  	return barGraph;

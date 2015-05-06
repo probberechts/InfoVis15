@@ -6,11 +6,14 @@
   margin-bottom: 100px;
 }
 
+/**
+* Common
+*/
+
 .axis path,
 .axis line {
   fill: none;
   stroke: #000;
-  shape-rendering: crispEdges;
 }
 
 .area {
@@ -21,24 +24,9 @@
   display: none;
 }
 
-.line {
-  fill: none;
-  stroke: #d3d3d3;
-  stroke-width: 1.5px;
-}
-
-.active-line {
-  fill: none;
-  stroke: #18bc9c;
-  stroke-width: 1.5px;
-}
-
-.brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}
-
+/**
+* Responsiveness
+*/
 .svg-container {
     display: inline-block;
     position: relative;
@@ -47,6 +35,16 @@
     vertical-align: top;
     overflow: hidden;
 }
+
+.svg-container-timeline {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 75%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+
 .svg-container-map {
     cursor: move;
     display: inline-block;
@@ -55,6 +53,7 @@
     vertical-align: top;
     overflow: hidden;
 }
+
 .svg-content-responsive {
     display: inline-block;
     position: absolute;
@@ -66,7 +65,7 @@
  * Bar chart
  */
 .bar {
-  fill: steelblue;
+  fill: #d3d3d3;
   cursor: pointer;
 }
 
@@ -75,11 +74,34 @@
   cursor: pointer;
 }
 
+.highlightedBar {
+  fill: steelblue;
+  cursor: pointer;
+}
+
 /**
  * Line chart
  */
 #timeline-container {
     cursor: move;
+}
+
+.line {
+  fill: none;
+  stroke: #d3d3d3;
+  stroke-width: 1.5px;
+}
+
+.activeLine {
+  fill: none;
+  stroke: #18bc9c;
+  stroke-width: 1.5px;
+}
+
+.highlightedLine {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
 }
 
 /**

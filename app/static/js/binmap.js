@@ -17,7 +17,7 @@ var binMap = (function () {
 
   binMap.create = function() {
     overviewMap = po.map()
-      .container( 
+      .container(
 		d3.select( "#overviewMap" )
 			.append("div")
 			.classed("svg-container-map", true)
@@ -25,7 +25,7 @@ var binMap = (function () {
 			.attr("preserveAspectRatio", "xMinYMin meet")
 			.attr("viewBox", "0 0 600 300")
 			.classed("svg-content-responsive", true)
-			.node() 
+			.node()
 		);
 
     overviewMap.add(po.geoJson()
@@ -41,13 +41,13 @@ var binMap = (function () {
     hexLayer = d3.select( "#overviewMap svg" ).insert( "svg:g" ).attr( "class", cbScheme );
 
     focusMap = po.map()
-      .container( 
+      .container(
 		d3.select( "#focusMap" )
 			.append("div")
 			.classed("svg-container-map", true)
 			.append( "svg:svg" )
 			.attr("preserveAspectRatio", "xMinYMin meet")
-			.attr("viewBox", "0 0 600 300")
+			.attr("viewBox", "0 0 600 500")
 			.classed("svg-content-responsive", true)
 			.node()
 		)
@@ -59,8 +59,8 @@ var binMap = (function () {
       });
 
     focusMap.add(po.image()
-      .url(po.url("http://{S}tile.cloudmade.com"  
-                  + "/1a1b06b230af4efdbb989ea99e9841af"  // http://cloudmade.com/register 
+      .url(po.url("http://{S}tile.cloudmade.com"
+                  + "/1a1b06b230af4efdbb989ea99e9841af"  // http://cloudmade.com/register
                   + "/998/256/{Z}/{X}/{Y}.png")
       .hosts(["a.", "b.", "c.", ""])));
 
@@ -85,7 +85,7 @@ var binMap = (function () {
         { lat : bounds[1], lon : bounds[0] },
         { lat : bounds[3], lon : bounds[2] }
       ]
-    ).zoom(7.8);
+    ).zoom(10.8);
   };
 
   binMap.updateData = function( d ) {
@@ -100,7 +100,7 @@ var binMap = (function () {
 
   var update = function( d ) {
     data = d;
-	
+
     if (focusMap === undefined)
       binMap.create();
 
@@ -194,8 +194,8 @@ var binMap = (function () {
 
             return 1;
         })
-        .attr( "points", function(d) { 
-          return d.pointString; 
+        .attr( "points", function(d) {
+          return d.pointString;
         });
 
         // exit
@@ -220,8 +220,8 @@ var binMap = (function () {
   };
 
   var center_focusMap_on_hex = function( hex ) {
-    var center = hex.centre(), 
-		x = xMin + ( center.x * hexI - 0.5 * hexI ), 
+    var center = hex.centre(),
+		x = xMin + ( center.x * hexI - 0.5 * hexI ),
 		y = yMax - ( center.y * hexI - 0.5 * hexI );
 
     var llCenter = overviewMap.pointLocation( { x : x, y : y } );
@@ -244,8 +244,8 @@ var binMap = (function () {
   };
 
   var generate_pathString_from_points = function( points ) {
-    var i = 0, 
-		pt = points[i], 
+    var i = 0,
+		pt = points[i],
 		pt_ll = overviewMap.pointLocation( pt ),
 		pt_focus = focusMap.locationPoint( pt_ll );
 

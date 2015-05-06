@@ -24,10 +24,10 @@ $('body').scrollspy({
 $('.navbar-collapse ul li a').click(function() {
     $('.navbar-toggle:visible').click();
 });
- 
+
 $( document ).ready(function() {
-    $("[rel='tooltip']").tooltip();    
- 
+    $("[rel='tooltip']").tooltip();
+
     $('.thumbnail').hover(
         function(){
             $(this).find('.caption').slideDown(250); //.fadeIn(250)
@@ -35,5 +35,5 @@ $( document ).ready(function() {
         function(){
             $(this).find('.caption').slideUp(250); //.fadeOut(205)
         }
-    ); 
+    );
 });
