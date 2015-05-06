@@ -47,7 +47,7 @@ var binMap = (function () {
 			.classed("svg-container-map", true)
 			.append( "svg:svg" )
 			.attr("preserveAspectRatio", "xMinYMin meet")
-			.attr("viewBox", "0 0 600 500")
+			.attr("viewBox", "0 0 600 440")
 			.classed("svg-content-responsive", true)
 			.node()
 		)
@@ -117,7 +117,7 @@ var binMap = (function () {
         { lat : bounds[1], lon : bounds[0] },
         { lat : bounds[3], lon : bounds[2] }
       ]
-    ).zoom(11.6);
+    ).zoom(12.3);
   };
 
   var generate_hexgrid = function(data) {
