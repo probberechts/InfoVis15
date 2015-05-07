@@ -12,7 +12,9 @@ var monthGraph = (function () {
 			maxDate = new Date(2000,12,31);
 
 	//local variables
-	var svg, x, xAxis, y1, y, yAxis, yAxis1;
+	var svg, x, xAxis, yB, yW, yAxisB, yAxisW;
+  var dataB, dataW;
+  var selectedWeather = "tmax";
 	var be_nl = d3.locale({
 				  "decimal": ",",
 				  "thousands": ".",
@@ -27,6 +29,7 @@ var monthGraph = (function () {
 				  "months": ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
 				  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 			  });
+  
 
 	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 15},
 		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15},
@@ -38,16 +41,37 @@ var monthGraph = (function () {
 		z.translate([Math.min(t[0], 0), Math.max(t[0], 100)]);
 		//xAxis.tickFormat(getTTimeFormat2(x.domain()[0],x.domain()[1]));
 		svg.select(".x.axis").call(xAxis);
-		y1 = y1.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
-    yAxis1.scale(y1);
-    svg.select("#yaxis1").call(yAxis1);
-    //y = y.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
-    //yAxis.scale(y);
-    //svg.select("#yaxis").call(yAxis);
-		svg.selectAll(".line")
-			.attr("d", line)
-		svg.selectAll(".activeLine")
-			.attr("d", line);
+
+    var max = 10;
+    var tmp = [];
+    dataB.forEach(function(dt) {
+      tmp = d3.max(dt.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1] ;}), function(d) { return d.values; });
+      if (tmp > max) max = tmp;
+    });
+    yB = yB.domain( [0, max+10] );
+    yAxisB.scale(yB);
+    svg.select("#yaxisB").call(yAxisB);
+
+    var max = 0;
+    var tmp = [];
+    dataW.forEach(function(dt) {
+      tmp = d3.max(dt.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1] ;}), function(d) { return d.values; });
+      if (tmp > max) max = tmp;
+    });
+    var min = 20;
+    var tmp = [];
+    dataW.forEach(function(dt) {
+      tmp = d3.min(dt.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1] ;}), function(d) { return d.values; });
+      if (tmp < min) min = tmp;
+    });
+    yW = yW.domain( [min-5,max+5]);
+    yAxisW.scale(yW);
+    svg.select("#yaxisW").call(yAxisW);
+
+		svg.selectAll(".B")
+			.attr("d", lineB)
+		svg.selectAll(".W")
+			.attr("d", lineW);
 	};
 
 	var zoomed = function() {
@@ -64,15 +88,15 @@ var monthGraph = (function () {
 		  .on("zoomend", zoomed);
 	};
 
-		// define lines
-	var line1 = d3.svg.line()
+	// define lines
+	var lineB = d3.svg.line()
 		.x(function(d) { return x(d.key); })
-		.y(function(d) { return y1(d.values); })
+		.y(function(d) { return yB(d.values); })
 		.interpolate("basis");
 
-	var line = d3.svg.line()
+	var lineW = d3.svg.line()
 			.x(function(d) { return x(d.key); })
-			.y(function(d) { return y(d.values); })
+			.y(function(d) { return yW(d.values); })
 			.interpolate("basis");
 
 	monthGraph.create = function() {
@@ -93,12 +117,12 @@ var monthGraph = (function () {
 
 	monthGraph.update = function(butterflyData, weatherData) {
 		// prepare data
-		var butterflyData = prepareButterflyData(butterflyData);
-		var weatherData = prepareWeatherData(weatherData);
+		dataB = prepareButterflyData(butterflyData);
+		dataW = prepareWeatherData(weatherData);
 
 		// compute x-axis bounds
 		var minnDate = maxDate;
-		butterflyData.forEach(function(d){
+		dataB.forEach(function(d){
 			var min = d3.min(d, function(d2){
 				return d2.key;
 			});
@@ -108,7 +132,7 @@ var monthGraph = (function () {
 		minnDate.setDate(1);
 
 		var maxxDate = minDate;
-		butterflyData.forEach(function(d){
+		dataB.forEach(function(d){
 			var max = d3.max(d, function(d2){
 				return d2.key;
 			});
@@ -140,9 +164,11 @@ var monthGraph = (function () {
 			.attr("transform", "translate(27,2)" );
 
 		// show data
-		updateButterflyData(butterflyData);
-		updateWeatherData(weatherData);
-		//d3.select("#monthgraph").call(zoomtime());
+		updateButterflyData(dataB);
+		updateWeatherData(dataW);
+
+    // enable zoom
+    d3.select("#monthgraph").call(zoomtime());
 	};
 
 	var updateButterflyData = function(data) {
@@ -158,18 +184,18 @@ var monthGraph = (function () {
 		});
 
 		// setup y-axis
-		y1 = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([vlindersHeight, 0]);
+		yB = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([vlindersHeight, 0]);
 
-		yAxis1 = d3.svg.axis()
-				.scale(y1)
+		yAxisB = d3.svg.axis()
+				.scale(yB)
 				.orient("left")
 				.ticks(5);
 
 		svg.append("g")
 			.attr("class", "y axis")
-			.attr("id", "yaxis1")
+			.attr("id", "yaxisB")
 			.attr("transform", "translate(0," + margin.top + ")")
-			.call(yAxis1)
+			.call(yAxisB)
 		.append("text")
 			.attr("transform", "rotate(-90)")
 			.attr("y", 6)
@@ -182,46 +208,50 @@ var monthGraph = (function () {
 		data.forEach(function(d){
 			innerSvg.append("path")
 			.datum(d)
-			.attr("class", "activeLine")
+			.attr("class", "line B activeLine")
 			.attr("transform", "translate(0," + margin.top + ")")
-			.attr("id", "line"+d[0].jaar)
-			.attr("d", line1)
+			.attr("id", "lineB"+d[0].jaar)
+			.attr("d", lineB)
 			.on("mouseover", function(){
 					var hoveredLine = d3.select(this);
 					if (!hoveredLine.classed("activeLine")) {
-						var hoveredYear = d3.select(this).attr("id").substring(4);
-						d3.selectAll("#bar"+hoveredYear).attr("class", "highlightedBar");
-						d3.selectAll("#line"+hoveredYear).attr("class", "highlightedLine");
+						var hoveredYear = d3.select(this).attr("id").substring(5);
+						d3.select("#bar"+hoveredYear).classed("highlightedBar", true);
+						d3.select("#lineB"+hoveredYear).classed("highlightedLine", true);
+            d3.select("#lineW"+hoveredYear).classed("highlightedLine", true);
 					}
 			})
 			.on("mouseout", function(){
 				var hoveredLine = d3.select(this);
 				if (!hoveredLine.classed("activeLine")) {
-					d3.selectAll(".highlightedBar").attr("class", "bar");
-					d3.selectAll(".highlightedLine").attr("class", "line");
+					d3.selectAll(".highlightedBar").classed("highlightedBar", false);
+					d3.selectAll(".highlightedLine").classed("highlightedLine", false);
 				}
 			})
 			.on("click", function(){
-				var clickedYear = d3.select(this).attr("id").substring(4);
-				if (selectedYear == 0) {
+				var clickedYear = d3.select(this).attr("id").substring(5);
+				if (selectedYear == 0) { // all years are selected
+          d3.selectAll(".activeBar").classed("activeBar", false);
+          d3.selectAll(".activeLine").classed("activeLine", false);
 					selectedYear = clickedYear;
 					updateYear(clickedYear);
-					d3.selectAll(".activeBar").attr("class", "bar");
-					d3.selectAll(".activeLine").attr("class", "line");
-					d3.selectAll("#bar"+clickedYear).attr("class", "activeBar");
-					d3.selectAll("#line"+clickedYear).attr("class", "activeLine");
-				} else if(selectedYear != clickedYear) {
-					d3.selectAll("#line"+selectedYear).attr("class", "line");
+					d3.select("#bar"+clickedYear).classed("activeBar", true);
+					d3.select("#lineB"+clickedYear).classed("activeLine", true);
+          d3.select("#lineW"+clickedYear).classed("activeLine", true);
+				} else if(selectedYear != clickedYear) { // select a different year
+          d3.select("#bar"+selectedYear).classed("activeBar", false);
+					d3.select("#lineB"+selectedYear).classed("activeLine", false);
+          d3.select("#lineW"+selectedYear).classed("activeLine", false);
 					selectedYear = clickedYear;
 					updateYear(clickedYear);
-					d3.selectAll(".activeBar").attr("class", "bar");
-					d3.selectAll("#bar"+clickedYear).attr("class", "activeBar");
-					d3.selectAll("#line"+clickedYear).attr("class", "activeLine");
-				}else{
-					//deselect year
-					d3.selectAll("#line"+selectedYear).attr("class", "line");
+					d3.select("#bar"+clickedYear).classed("highlightedBar", false).classed("activeBar", true);
+					d3.select("#lineB"+clickedYear).classed("highlightedLine", false).classed("activeLine", true);
+          d3.select("#lineW"+clickedYear).classed("highlightedLine", false).classed("activeLine", true);
+				} else { //deselect year
+          d3.select("#bar"+selectedYear).classed("activeBar", false);
+					d3.select("#lineB"+selectedYear).classed("activeLine", false);
+          d3.select("#lineW"+selectedYear).classed("activeLine", false);
 					selectedYear = 0;
-					d3.selectAll(".bar").attr("class", "activeBar");
 					updateSoort(selectedSoort);
 				}
 			});
@@ -240,18 +270,18 @@ var monthGraph = (function () {
 				max = m;
 		});
 
-		y = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([weerHeight, 0]);
+		yW = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([weerHeight, 0]);
 
-		yAxis = d3.svg.axis()
-				.scale(y)
+		yAxisW = d3.svg.axis()
+				.scale(yW)
 				.orient("left")
 				.ticks(5);
 
 		svg.append("g")
 			.attr("class", "y axis")
-			.attr("id", "yaxis")
+			.attr("id", "yaxisW")
 			.attr("transform", "translate(0," + (vlindersHeight + margin.top + margin.axis) + ")")
-			.call(yAxis)
+			.call(yAxisW)
 		.append("text")
 			.attr("transform", "rotate(-90)")
 			.attr("y", 6)
@@ -263,53 +293,91 @@ var monthGraph = (function () {
 		for (jaar in data) {
 			innerSvg.append("path")
 				.datum(data[jaar])
-				.attr("class", "activeLine")
+				.attr("class", "line W activeLine")
 				.attr("transform", "translate(0," + (vlindersHeight + margin.top + margin.axis) + ")")
-				.attr("id", "line" + jaar)
-				.attr("d", line)
-				.on("mouseover", function(){
-						var hoveredLine = d3.select(this);
-						if (!hoveredLine.classed("activeLine")) {
-							var hoveredYear = d3.select(this).attr("id").substring(4);
-							d3.selectAll("#bar"+hoveredYear).attr("class", "highlightedBar");
-							d3.selectAll("#line"+hoveredYear).attr("class", "highlightedLine");
-						}
-				})
-				.on("mouseout", function(){
-					var hoveredLine = d3.select(this);
-					if (!hoveredLine.classed("activeLine")) {
-						d3.selectAll(".highlightedBar").attr("class", "bar");
-						d3.selectAll(".highlightedLine").attr("class", "line");
-					}
-				})
-				.on("click", function(){
-					var clickedYear = d3.select(this).attr("id").substring(4);
-					if (selectedYear == 0) {
-						selectedYear = clickedYear;
-						updateYear(clickedYear);
-						d3.selectAll(".activeBar").attr("class", "bar");
-						d3.selectAll(".activeLine").attr("class", "line");
-						d3.selectAll("#bar"+clickedYear).attr("class", "activeBar");
-						d3.selectAll("#line"+clickedYear).attr("class", "activeLine");
-					} else if(selectedYear != clickedYear) {
-						d3.selectAll("#line"+selectedYear).attr("class", "line");
-						selectedYear = clickedYear;
-						updateYear(clickedYear);
-						d3.selectAll(".activeBar").attr("class", "bar");
-						d3.selectAll("#bar"+clickedYear).attr("class", "activeBar");
-						d3.selectAll("#line"+clickedYear).attr("class", "activeLine");
-					}else{
-						//deselect year
-						d3.selectAll("#line"+selectedYear).attr("class", "line");
-						selectedYear = 0;
-						d3.selectAll(".bar").attr("class", "activeBar");
-						updateSoort(selectedSoort);
-					}
+				.attr("id", "lineW" + jaar)
+				.attr("d", lineW)
+        .on("mouseover", function(){
+            var hoveredLine = d3.select(this);
+            if (!hoveredLine.classed("activeLine")) {
+              var hoveredYear = d3.select(this).attr("id").substring(5);
+              d3.select("#bar"+hoveredYear).classed("highlightedBar", true);
+              d3.select("#lineB"+hoveredYear).classed("highlightedLine", true);
+              d3.select("#lineW"+hoveredYear).classed("highlightedLine", true);
+            }
+        })
+        .on("mouseout", function(){
+          var hoveredLine = d3.select(this);
+          if (!hoveredLine.classed("activeLine")) {
+            d3.selectAll(".highlightedBar").classed("highlightedBar", false);
+            d3.selectAll(".highlightedLine").classed("highlightedLine", false);
+          }
+        })
+        .on("click", function(){
+          var clickedYear = d3.select(this).attr("id").substring(5);
+          if (selectedYear == 0) { // all years are selected
+            d3.selectAll(".activeBar").classed("activeBar", false);
+            d3.selectAll(".activeLine").classed("activeLine", false);
+            selectedYear = clickedYear;
+            updateYear(clickedYear);
+            d3.select("#bar"+clickedYear).classed("activeBar", true);
+            d3.select("#lineB"+clickedYear).classed("activeLine", true);
+            d3.select("#lineW"+clickedYear).classed("activeLine", true);
+          } else if(selectedYear != clickedYear) { // select a different year
+            d3.select("#bar"+selectedYear).classed("activeBar", false);
+            d3.select("#lineB"+selectedYear).classed("activeLine", false);
+            d3.select("#lineW"+selectedYear).classed("activeLine", false);
+            selectedYear = clickedYear;
+            updateYear(clickedYear);
+            d3.select("#bar"+clickedYear).classed("highlightedBar", false).classed("activeBar", true);
+            d3.select("#lineB"+clickedYear).classed("highlightedLine", false).classed("activeLine", true);
+            d3.select("#lineW"+clickedYear).classed("highlightedLine", false).classed("activeLine", true);
+          } else { //deselect year
+            d3.select("#bar"+selectedYear).classed("activeBar", false);
+            d3.select("#lineB"+selectedYear).classed("activeLine", false);
+            d3.select("#lineW"+selectedYear).classed("activeLine", false);
+            selectedYear = 0;
+            updateSoort(selectedSoort);
+          }
 				});
 		};
 		showButtons(innerSvg);
 
 	};
+
+  var changeWeatherData = function(selectedWeather) {
+    $.ajax({
+        url: 'http://' + window.location.host + '/data/weer/' + selectedWeather,
+        dataType: "json",
+        contentType: "application/json",
+        success: function(weatherdata) {
+            var data = prepareWeatherData(weatherdata);
+
+            // largest y-value
+            var max = 0;
+            data.forEach(function(d){
+              var m = d3.max(d, function(d2){
+                return d2.values;
+              });
+              if(m > max)
+                max = m;
+            });
+
+            yW = yW.domain([0, Math.round(max / 10) * 10]);
+
+            yAxisW.scale(yW);
+            svg.select("#yaxisW").call(yAxisW);
+
+            for (jaar in data) {
+              d3.select("#lineW"+jaar)
+        				.datum(data[jaar])
+                .attr("d", lineW);
+            }
+        }
+    });
+
+
+  };
 
 	var showButtons = function(innerSvg) {
 		//add temp & precip buttons
@@ -341,7 +409,8 @@ var monthGraph = (function () {
 					    	return d.selectedimg;
 					    else return d.img;
 					})
-					changeWeather(d.name);
+          selectedWeather = d.name;
+          changeWeatherData(d.name);
 		    	}
 		    });
 	}

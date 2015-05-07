@@ -88,31 +88,42 @@ var barGraph = (function() {
 						var hoveredBar = d3.select(this);
 						if (!hoveredBar.classed("activeBar")) {
 							var hoveredYear = d3.select(this).attr("id").substring(3);
-							d3.selectAll("#bar"+hoveredYear).attr("class", "highlightedBar");
-							d3.selectAll("#line"+hoveredYear).attr("class", "highlightedLine");
+							d3.select("#bar"+hoveredYear).classed("highlightedBar", true);
+							d3.select("#lineB"+hoveredYear).classed("highlightedLine", true);
+							d3.select("#lineW"+hoveredYear).classed("highlightedLine", true);
 						}
 				})
 				.on("mouseout", function(){
 					var hoveredBar = d3.select(this);
 					if (!hoveredBar.classed("activeBar")) {
-						d3.selectAll(".highlightedBar").attr("class", "bar");
-						d3.selectAll(".highlightedLine").attr("class", "line");
+						d3.selectAll(".highlightedBar").classed("highlightedBar", false);
+						d3.selectAll(".highlightedLine").classed("highlightedLine", false);
 					}
 				})
 				.on("click", function(d) {
 					var clickedYear = d.year;
-					if(selectedYear != clickedYear) {
+					if (selectedYear == 0) { // all years are selected
+	          d3.selectAll(".activeBar").classed("activeBar", false);
+	          d3.selectAll(".activeLine").classed("activeLine", false);
 						selectedYear = clickedYear;
 						updateYear(clickedYear);
-						d3.selectAll(".activeLine").attr("class", "line");
-						svg.selectAll(".activeBar").attr("class", "bar");
-						d3.select(this).attr("class", "activeBar");
-						d3.selectAll("#line"+clickedYear).attr("class", "activeLine");
-					} else {
-						//deselect year
-						d3.selectAll(".activeLine").attr("class", "line");
+						d3.select("#bar"+clickedYear).classed("activeBar", true);
+						d3.select("#lineB"+clickedYear).classed("activeLine", true);
+	          d3.select("#lineW"+clickedYear).classed("activeLine", true);
+					} else if(selectedYear != clickedYear) { // select a different year
+	          d3.select("#bar"+selectedYear).classed("activeBar", false);
+						d3.select("#lineB"+selectedYear).classed("activeLine", false);
+	          d3.select("#lineW"+selectedYear).classed("activeLine", false);
+						selectedYear = clickedYear;
+						updateYear(clickedYear);
+						d3.select("#bar"+clickedYear).classed("highlightedBar", false).classed("activeBar", true);
+						d3.select("#lineB"+clickedYear).classed("highlightedLine", false).classed("activeLine", true);
+	          d3.select("#lineW"+clickedYear).classed("highlightedLine", false).classed("activeLine", true);
+					} else { //deselect year
+	          d3.select("#bar"+selectedYear).classed("activeBar", false);
+						d3.select("#lineB"+selectedYear).classed("activeLine", false);
+	          d3.select("#lineW"+selectedYear).classed("activeLine", false);
 						selectedYear = 0;
-						svg.selectAll(".bar").attr("class", "activeBar");
 						updateSoort(selectedSoort);
 					}
 				});

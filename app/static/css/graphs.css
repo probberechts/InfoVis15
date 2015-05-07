@@ -95,6 +95,7 @@
   fill: none;
   stroke: #d3d3d3;
   stroke-width: 1.5px;
+  cursor: pointer;
 }
 
 .activeLine {
