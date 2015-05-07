@@ -28,6 +28,10 @@ var monthGraph = (function () {
 				  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 			  });
 
+	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 29}, 
+		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 29}, 
+		{name: 'neerslag', selected: false, img: "/static/img/neerslag.png", selectedimg: "/static/img/neerslag_selected.png", x: 75, width: 63}];
+
 	monthGraph.create = function() {
 		// create SVG container
 		d3.select("#timeline-container").remove();
@@ -232,7 +236,7 @@ var monthGraph = (function () {
 			.attr("y", 6)
 			.attr("dy", ".71em")
 			.style("text-anchor", "end")
-			.text("Temp");
+			.text(selectedWeather);
 
 		var innerSvg = svg.append("svg");
 		for (jaar in data) {
@@ -282,6 +286,48 @@ var monthGraph = (function () {
 					}
 				});
 		};
+		showButtons(innerSvg);
+		
+	};
+
+	var showButtons = function(innerSvg) {
+		//add temp & precip buttons
+		var img = innerSvg.selectAll("image")
+			.data(images)
+			.enter()
+			.append("svg:image")
+		    .attr("xlink:href", function(d) {
+		    	if(d.selected)
+			    	return d.selectedimg;
+			    else return d.img;
+			})
+			.attr("width", function(d) {
+		    	return d.width;
+		    })
+		    .attr("height", 53)
+		    .attr("x", function(d,i) {
+		    	return 250 + i*29;
+		    })
+		    .attr("y",330)
+		    .on("click", function(d) {
+		    	if(!d.selected) {
+		    		//select this image, unselect other images
+		    		removeSelections();
+		    		d.selected = true;
+		    		img.attr("xlink:href", function(d) {
+				    	if(d.selected)
+					    	return d.selectedimg;
+					    else return d.img;
+					})
+					changeWeather(d.name);
+		    	}
+		    });
+	}
+
+	var removeSelections = function() {
+		images.forEach(function(d) {
+			d.selected = false;
+		});
 	};
 
 	var prepareButterflyData = function(inputdata){
@@ -335,7 +381,13 @@ var monthGraph = (function () {
 				if(!(d.jaar in perYearData))
 					perYearData[d.jaar] = new Array();
 				var day = firstDayOfWeek(2000, d.week);
-				perYearData[d.jaar].push({"key": day, "values": d.tmax});
+				if(selectedWeather == 'tmax') {
+					perYearData[d.jaar].push({"key": day, "values": d.tmax});
+				} else { 
+					if(selectedWeather == 'tmin') {
+						perYearData[d.jaar].push({"key": day, "values": d.tmin});
+					} else perYearData[d.jaar].push({"key": day, "values": d.neerslag});
+				}
 			});
 
 			return perYearData;

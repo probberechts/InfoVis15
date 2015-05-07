@@ -23,6 +23,7 @@
 <script>
 // update de geselecteerde soort
 var selectedSoort;
+var selectedWeather = 'tmax';
 function updateSoort(soort) {
     selectedSoort = soort;
 
@@ -54,7 +55,7 @@ function updateSoort(soort) {
         success: function(data) {
             // verzamel weer data
             $.ajax({
-                url: 'http://' + window.location.host + '/data/weer/tmax',
+                url: 'http://' + window.location.host + '/data/weer/' + selectedWeather,
                 dataType: "json",
                 contentType: "application/json",
                 success: function(weatherdata) {
@@ -68,6 +69,11 @@ function updateSoort(soort) {
             //updateHeatMap(data);
         }
     });
+}
+
+function changeWeather(weather) {
+    selectedWeather = weather;
+    updateSoort(selectedSoort);
 }
 
 // update het geselecteerde jaar
