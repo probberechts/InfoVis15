@@ -12,7 +12,7 @@ var monthGraph = (function () {
 			maxDate = new Date(2000,12,31);
 
 	//local variables
-	var svg, x;
+	var svg, x, xAxis, y1, y, yAxis, yAxis1;
 	var be_nl = d3.locale({
 				  "decimal": ",",
 				  "thousands": ".",
@@ -28,6 +28,51 @@ var monthGraph = (function () {
 				  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 			  });
 
+	var zooming = function() {
+		var z = zoomtime();
+		var t = z.translate();
+		z.translate([Math.min(t[0], 0), Math.max(t[0], 100)]);
+		//xAxis.tickFormat(getTTimeFormat2(x.domain()[0],x.domain()[1]));
+		svg.select(".x.axis").call(xAxis);
+		y = y.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
+		yAxis.scale(y);
+		//y1 = y1.domain([0,40]);
+		yAxis1.scale(y1);
+		svg.select("#yaxis").call(yAxis);
+		svg.select("#yaxis1").call(yAxis1);
+		svg.selectAll(".line")
+			.attr("class", "line")
+			.attr("d", line);
+		svg.selectAll(".activeLine")
+			.attr("class", "line")
+			.attr("d", line);
+	};
+
+	var zoomed = function() {
+		minDate = x.domain()[0];
+		maxDate = x.domain()[1];
+		binMap.filterData(minDate, maxDate);
+	};
+	
+	var zoomtime = function(){
+		return d3.behavior.zoom()
+		.x(x)//only horizontal panning
+		.scaleExtent([1, 10])
+		.on("zoom", zooming)
+		.on("zoomend", zoomed);
+	};
+			
+		// define lines
+	var line1 = d3.svg.line()
+		.x(function(d) { return x(d.key); })
+		.y(function(d) { return y1(d.values); })
+		.interpolate("basis");
+		
+	var line = d3.svg.line()
+			.x(function(d) { return x(d.key); })
+			.y(function(d) { return y(d.values); })
+			.interpolate("basis");
+			
 	monthGraph.create = function() {
 		// create SVG container
 		d3.select("#timeline-container").remove();
@@ -40,7 +85,6 @@ var monthGraph = (function () {
 			.attr("viewBox", "0 0 " + width + " " + (height + margin.top + margin.bottom + margin.axis))
 			.classed("svg-content-responsive", true)
 			.attr("id", "svggraph")
-			//.call(zoomtime)
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	};
@@ -77,7 +121,7 @@ var monthGraph = (function () {
 		// setup x-axis
 		x = d3.time.scale().domain([minnDate, maxxDate]).range([0, width - margin.right]);
 
-		var xAxis = d3.svg.axis()
+		xAxis = d3.svg.axis()
 				.scale(x)
 				.orient("bottom")
 				.ticks(getTTicks2(minnDate,maxxDate))
@@ -96,6 +140,7 @@ var monthGraph = (function () {
 		// show data
 		updateButterflyData(butterflyData);
 		updateWeatherData(weatherData);
+		//d3.select("#monthgraph").call(zoomtime());
 	};
 
 	var updateButterflyData = function(data) {
@@ -111,15 +156,16 @@ var monthGraph = (function () {
 		});
 
 		// setup y-axis
-		var y1 = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([vlindersHeight, 0]);
+		y1 = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([vlindersHeight, 0]);
 
-		var yAxis1 = d3.svg.axis()
+		yAxis1 = d3.svg.axis()
 				.scale(y1)
 				.orient("left")
 				.ticks(5);
 
 		svg.append("g")
 			.attr("class", "y axis")
+			.attr("id", "yaxis1")
 			.attr("transform", "translate(0," + margin.top + ")")
 			.call(yAxis1)
 		.append("text")
@@ -128,20 +174,7 @@ var monthGraph = (function () {
 			.attr("dy", ".71em")
 			.style("text-anchor", "end")
 			.text("Aantal");
-
-		// define lines
-		var line = d3.svg.line()
-			.x(function(d) { return x(d.key); })
-			.y(function(d) { return y1(d.values); })
-			.interpolate("basis");
-
-		// define zoom behaviour
-		var zoomtime = d3.behavior.zoom()
-			.x(x)//only horizontal panning
-			.scaleExtent([1, 12])
-			.on("zoom", zooming)
-			.on("zoomend", zoomed);
-
+			
 		// draw lines and define click behaviour
 		var innerSvg = svg.append("svg");
 		data.forEach(function(d){
@@ -150,7 +183,7 @@ var monthGraph = (function () {
 			.attr("class", "activeLine")
 			.attr("transform", "translate(0," + margin.top + ")")
 			.attr("id", "line"+d[0].jaar)
-			.attr("d", line)
+			.attr("d", line1)
 			.on("mouseover", function(){
 					var hoveredLine = d3.select(this);
 					if (!hoveredLine.classed("activeLine")) {
@@ -205,26 +238,16 @@ var monthGraph = (function () {
 				max = m;
 		});
 
-		var y = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([weerHeight, 0]);
+		y = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([weerHeight, 0]);
 
-		var line = d3.svg.line()
-			.x(function(d) { return x(d.key); })
-			.y(function(d) { return y(d.values); })
-			.interpolate("basis");
-
-		var zoomtime = d3.behavior.zoom()
-			.x(x)//only horizontal panning
-			.scaleExtent([1, 12])
-			.on("zoom", zooming)
-			.on("zoomend", zoomed);
-
-		var yAxis = d3.svg.axis()
+		yAxis = d3.svg.axis()
 				.scale(y)
 				.orient("left")
 				.ticks(5);
 
 		svg.append("g")
 			.attr("class", "y axis")
+			.attr("id", "yaxis")
 			.attr("transform", "translate(0," + (vlindersHeight + margin.top + margin.axis) + ")")
 			.call(yAxis)
 		.append("text")
@@ -339,26 +362,6 @@ var monthGraph = (function () {
 			});
 
 			return perYearData;
-	}
-
-
-	var zooming = function() {
-		var t = zoomtime.translate();
-		zoomtime.translate([Math.min(t[0], 0), Math.max(t[0], 100)]);
-		xAxis.tickFormat(getTTimeFormat2(x.domain()[0],x.domain()[1]));
-		svg.select(".x.axis").call(xAxis);
-		y = y.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
-		yAxis.scale(y);
-		svg.select(".y.axis").call(yAxis);
-		innerSvg.select(".line")
-			.attr("class", "line")
-			.attr("d", line);
-	}
-
-	var zoomed = function() {
-		minDate = x.domain()[0];
-		maxDate = x.domain()[1];
-		binMap.filterData(minDate, maxDate);
 	}
 
 	var getTTicks2 = function(minD, maxD){
