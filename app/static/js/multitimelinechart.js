@@ -28,9 +28,9 @@ var monthGraph = (function () {
 				  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 			  });
 
-	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 29}, 
-		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 29}, 
-		{name: 'neerslag', selected: false, img: "/static/img/neerslag.png", selectedimg: "/static/img/neerslag_selected.png", x: 75, width: 63}];
+	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 15},
+		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15},
+		{name: 'neerslag', selected: false, img: "/static/img/neerslag.png", selectedimg: "/static/img/neerslag_selected.png", x: 75, width: 31}];
 
 	var zooming = function() {
 		var z = zoomtime();
@@ -38,17 +38,15 @@ var monthGraph = (function () {
 		z.translate([Math.min(t[0], 0), Math.max(t[0], 100)]);
 		//xAxis.tickFormat(getTTimeFormat2(x.domain()[0],x.domain()[1]));
 		svg.select(".x.axis").call(xAxis);
-		y = y.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
-		yAxis.scale(y);
-		//y1 = y1.domain([0,40]);
-		yAxis1.scale(y1);
-		svg.select("#yaxis").call(yAxis);
-		svg.select("#yaxis1").call(yAxis1);
+		y1 = y1.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
+    yAxis1.scale(y1);
+    svg.select("#yaxis1").call(yAxis1);
+    //y = y.domain([0,Math.max(10,d3.max(data.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1];}), function(d) { return d.values; })+10)]);
+    //yAxis.scale(y);
+    //svg.select("#yaxis").call(yAxis);
 		svg.selectAll(".line")
-			.attr("class", "line")
-			.attr("d", line);
+			.attr("d", line)
 		svg.selectAll(".activeLine")
-			.attr("class", "line")
 			.attr("d", line);
 	};
 
@@ -57,26 +55,26 @@ var monthGraph = (function () {
 		maxDate = x.domain()[1];
 		binMap.filterData(minDate, maxDate);
 	};
-	
+
 	var zoomtime = function(){
 		return d3.behavior.zoom()
-		.x(x)//only horizontal panning
-		.scaleExtent([1, 10])
-		.on("zoom", zooming)
-		.on("zoomend", zoomed);
+		  .x(x)//only horizontal panning
+		  .scaleExtent([1, 10])
+		  .on("zoom", zooming)
+		  .on("zoomend", zoomed);
 	};
-			
+
 		// define lines
 	var line1 = d3.svg.line()
 		.x(function(d) { return x(d.key); })
 		.y(function(d) { return y1(d.values); })
 		.interpolate("basis");
-		
+
 	var line = d3.svg.line()
 			.x(function(d) { return x(d.key); })
 			.y(function(d) { return y(d.values); })
 			.interpolate("basis");
-			
+
 	monthGraph.create = function() {
 		// create SVG container
 		d3.select("#timeline-container").remove();
@@ -178,7 +176,7 @@ var monthGraph = (function () {
 			.attr("dy", ".71em")
 			.style("text-anchor", "end")
 			.text("Aantal");
-			
+
 		// draw lines and define click behaviour
 		var innerSvg = svg.append("svg");
 		data.forEach(function(d){
@@ -310,7 +308,7 @@ var monthGraph = (function () {
 				});
 		};
 		showButtons(innerSvg);
-		
+
 	};
 
 	var showButtons = function(innerSvg) {
@@ -324,14 +322,15 @@ var monthGraph = (function () {
 			    	return d.selectedimg;
 			    else return d.img;
 			})
+      .attr("class", "button")
 			.attr("width", function(d) {
 		    	return d.width;
 		    })
 		    .attr("height", 53)
 		    .attr("x", function(d,i) {
-		    	return 250 + i*29;
+		    	return 400 + i*29;
 		    })
-		    .attr("y",330)
+		    .attr("y",340)
 		    .on("click", function(d) {
 		    	if(!d.selected) {
 		    		//select this image, unselect other images
@@ -406,7 +405,7 @@ var monthGraph = (function () {
 				var day = firstDayOfWeek(2000, d.week);
 				if(selectedWeather == 'tmax') {
 					perYearData[d.jaar].push({"key": day, "values": d.tmax});
-				} else { 
+				} else {
 					if(selectedWeather == 'tmin') {
 						perYearData[d.jaar].push({"key": day, "values": d.tmin});
 					} else perYearData[d.jaar].push({"key": day, "values": d.neerslag});

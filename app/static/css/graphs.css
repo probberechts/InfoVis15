@@ -24,6 +24,11 @@
   display: none;
 }
 
+.button {
+  fill: #18bc9c;
+  cursor: pointer;
+}
+
 /**
 * Responsiveness
 */
