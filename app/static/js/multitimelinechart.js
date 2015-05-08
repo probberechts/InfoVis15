@@ -14,7 +14,6 @@ var monthGraph = (function () {
 	//local variables
 	var svg, x, xAxis, yB, yW, yAxisB, yAxisW;
   var dataB, dataW;
-  var selectedWeather = "tmax";
 	var be_nl = d3.locale({
 				  "decimal": ",",
 				  "thousands": ".",
