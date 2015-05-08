@@ -94,8 +94,12 @@ var binMap = (function () {
   };
 
   binMap.filterData = function( minDate, maxDate ) {
-	var filteredData = originalData.filter(function(d){return d3.time.format("%Y-%m-%d").parse(d.datum) >= minDate && d3.time.format("%Y-%m-%d").parse(d.datum) <= maxDate;});
-	update(filteredData);
+	   var filteredData = originalData.filter(
+          function(d){
+            return d3.time.format("%Y-%m-%d").parse(d.datum).setYear(2000) >= minDate
+                      && d3.time.format("%Y-%m-%d").parse(d.datum).setYear(2000) <= maxDate;
+          });
+	    update(filteredData);
   };
 
   var update = function( d ) {
