@@ -32,8 +32,7 @@ var monthGraph = (function () {
 
 
 	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 15},
-		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15},
-		{name: 'neerslag', selected: false, img: "/static/img/neerslag.png", selectedimg: "/static/img/neerslag_selected.png", x: 75, width: 31}];
+		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15}];
 
 	var zooming = function() {
 		var z = zoomtime();
@@ -414,7 +413,7 @@ var monthGraph = (function () {
 		    })
 		    .attr("height", 53)
 		    .attr("x", function(d,i) {
-		    	return 400 + i*29;
+		    	return 440 + i*29;
 		    })
 		    .attr("y",340)
 		    .on("click", function(d) {
