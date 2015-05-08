@@ -29,7 +29,7 @@ var monthGraph = (function () {
 				  "months": ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
 				  "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 			  });
-  
+
 
 	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 15},
 		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15},
@@ -53,13 +53,13 @@ var monthGraph = (function () {
     svg.select("#yaxisB").call(yAxisB);
 
     var max = 0;
-    var tmp = [];
+    var tmp = max;
     dataW.forEach(function(dt) {
       tmp = d3.max(dt.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1] ;}), function(d) { return d.values; });
       if (tmp > max) max = tmp;
     });
     var min = 20;
-    var tmp = [];
+    var tmp = min;
     dataW.forEach(function(dt) {
       tmp = d3.min(dt.filter(function(d){return d.key >= x.domain()[0] && d.key <= x.domain()[1] ;}), function(d) { return d.values; });
       if (tmp < min) min = tmp;
@@ -270,7 +270,16 @@ var monthGraph = (function () {
 				max = m;
 		});
 
-		yW = d3.scale.linear().domain([0, Math.round(max / 10) * 10]).range([weerHeight, 0]);
+    var min = 0;
+		data.forEach(function(d){
+			var m = d3.min(d, function(d2){
+				return d2.values;
+			});
+			if(m < min)
+				min = m;
+		});
+
+		yW = d3.scale.linear().domain([Math.round(min / 10) * 10, Math.round(max / 10) * 10]).range([weerHeight, 0]);
 
 		yAxisW = d3.svg.axis()
 				.scale(yW)
@@ -351,11 +360,11 @@ var monthGraph = (function () {
         dataType: "json",
         contentType: "application/json",
         success: function(weatherdata) {
-            var data = prepareWeatherData(weatherdata);
+            dataW = prepareWeatherData(weatherdata);
 
             // largest y-value
             var max = 0;
-            data.forEach(function(d){
+            dataW.forEach(function(d){
               var m = d3.max(d, function(d2){
                 return d2.values;
               });
@@ -363,14 +372,23 @@ var monthGraph = (function () {
                 max = m;
             });
 
-            yW = yW.domain([0, Math.round(max / 10) * 10]);
+            var min = 0;
+            dataW.forEach(function(d){
+              var m = d3.min(d, function(d2){
+                return d2.values;
+              });
+              if(m < min)
+                min = m;
+            });
+
+            yW = yW.domain([Math.round(min / 10) * 10, Math.round(max / 10) * 10]);
 
             yAxisW.scale(yW);
             svg.select("#yaxisW").call(yAxisW);
 
-            for (jaar in data) {
+            for (jaar in dataW) {
               d3.select("#lineW"+jaar)
-        				.datum(data[jaar])
+        				.datum(dataW[jaar])
                 .attr("d", lineW);
             }
         }
