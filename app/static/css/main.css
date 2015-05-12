@@ -404,3 +404,7 @@ footer .footer-below {
 .caption p {
     font: 14px calibri;
 }
+
+#tooltip {
+    font: 20px calibri;
+}

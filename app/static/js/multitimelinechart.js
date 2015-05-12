@@ -396,6 +396,14 @@ var monthGraph = (function () {
   };
 
 	var showButtons = function(innerSvg) {
+		var tooltip = d3.select("body")
+			.append("div")
+			.style("position", "absolute")
+			.style("z-index", "10")
+			.style("visibility", "hidden")
+			.attr("id", "tooltip")
+			.text("a simple tooltip");
+
 		//add temp & precip buttons
 		var img = innerSvg.selectAll("image")
 			.data(images)
@@ -406,7 +414,7 @@ var monthGraph = (function () {
 			    	return d.selectedimg;
 			    else return d.img;
 			})
-      .attr("class", "button")
+      		.attr("class", "button")
 			.attr("width", function(d) {
 		    	return d.width;
 		    })
@@ -415,6 +423,12 @@ var monthGraph = (function () {
 		    	return 440 + i*29;
 		    })
 		    .attr("y",340)
+		    .on("mouseover", function(d){
+		    	tooltip.text(d.name);
+		    	return tooltip.style("visibility", "visible");
+		    })
+			.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+			.on("mouseout", function(){return tooltip.style("visibility", "hidden");})
 		    .on("click", function(d) {
 		    	if(!d.selected) {
 		    		//select this image, unselect other images
@@ -425,8 +439,8 @@ var monthGraph = (function () {
 					    	return d.selectedimg;
 					    else return d.img;
 					})
-          selectedWeather = d.name;
-          changeWeatherData(d.name);
+         			selectedWeather = d.name;
+          			changeWeatherData(d.name);
 		    	}
 		    });
 	}
