@@ -30,8 +30,8 @@ var monthGraph = (function () {
 			  });
 
 
-	var images = [{name: 'tmax', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 15},
-		{name: 'tmin', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15}];
+	var images = [{name: 'tmax', fullName: 'maximum temperatuur', selected: true, img: "/static/img/tmax.png", selectedimg: "/static/img/tmax_selected.png", x: 0, width: 15},
+		{name: 'tmin', fullName: 'minimum temperatuur', selected: false, img: "/static/img/tmin.png", selectedimg: "/static/img/tmin_selected.png", x: 29, width: 15}];
 
 	var zooming = function() {
 		var z = zoomtime();
@@ -424,10 +424,10 @@ var monthGraph = (function () {
 		    })
 		    .attr("y",340)
 		    .on("mouseover", function(d){
-		    	tooltip.text(d.name);
+		    	tooltip.text(d.fullName);
 		    	return tooltip.style("visibility", "visible");
 		    })
-			.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+			.on("mousemove", function(){return tooltip.style("top", (event.pageY+10)+"px").style("left",(event.pageX-90)+"px");})
 			.on("mouseout", function(){return tooltip.style("visibility", "hidden");})
 		    .on("click", function(d) {
 		    	if(!d.selected) {
