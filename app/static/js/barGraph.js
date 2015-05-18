@@ -73,7 +73,7 @@ var barGraph = (function() {
 				.attr("y", 6)
 				.attr("dy", ".71em")
 				.style("text-anchor", "end")
-				.text("Aantal");
+				.text("# observaties");
 
 		svg.selectAll("bar")
 				.data(yearlyOcc)

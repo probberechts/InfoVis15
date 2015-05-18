@@ -199,7 +199,7 @@ var monthGraph = (function () {
 			.attr("y", 6)
 			.attr("dy", ".71em")
 			.style("text-anchor", "end")
-			.text("Aantal");
+			.text("# observaties");
 
 		// draw lines and define click behaviour
 		var innerSvg = svg.append("svg");
@@ -399,6 +399,7 @@ var monthGraph = (function () {
 		var tooltip = d3.select("body")
 			.append("div")
 			.style("position", "absolute")
+			.style("font-size", "small")
 			.style("z-index", "10")
 			.style("visibility", "hidden")
 			.attr("id", "tooltip")
@@ -427,7 +428,7 @@ var monthGraph = (function () {
 		    	tooltip.text(d.fullName);
 		    	return tooltip.style("visibility", "visible");
 		    })
-			.on("mousemove", function(){return tooltip.style("top", (event.pageY+10)+"px").style("left",(event.pageX-90)+"px");})
+			.on("mousemove", function(){return tooltip.style("top", (event.pageY+15)+"px").style("left",(event.pageX-60)+"px");})
 			.on("mouseout", function(){return tooltip.style("visibility", "hidden");})
 		    .on("click", function(d) {
 		    	if(!d.selected) {
