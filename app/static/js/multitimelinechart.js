@@ -396,6 +396,7 @@ var monthGraph = (function () {
   };
 
 	var showButtons = function(innerSvg) {
+		//source: https://gist.github.com/biovisualize/1016860
 		var tooltip = d3.select("body")
 			.append("div")
 			.style("position", "absolute")
