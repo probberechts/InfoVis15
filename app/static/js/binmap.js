@@ -1,3 +1,12 @@
+/**
+ * The largest part of this code is copied from
+ * https://github.com/indiemaps/hexbin-js/blob/master/tests/walmart.html
+ * with some minor modifications. Added zooming, transitions, a geojson based
+ * map of Belgium and butterfly data parsing code. Finally wrapped it into
+ * a module pattern.
+ * The geojson map of Belgium was made using this tutorial:
+ * http://bost.ocks.org/mike/map/
+ */
 var binMap = (function () {
 
   var binMap = {};
@@ -29,7 +38,7 @@ var binMap = (function () {
 		);
 
     overviewMap.add(po.geoJson()
-      .url("/static/js/bel2.json").tile(false).on("load", belTopoLoad));
+      .url("/static/js/bel_topo.json").tile(false).on("load", belTopoLoad));
 
 	overviewMap.extent(
       [
@@ -59,9 +68,9 @@ var binMap = (function () {
       });
 
     focusMap.add(po.image()
-      .url(po.url("http://{S}tile.cloudmade.com"
-                  + "/1a1b06b230af4efdbb989ea99e9841af"  // http://cloudmade.com/register
-                  + "/998/256/{Z}/{X}/{Y}.png")
+      .url(po.url("http://{S}tile.cloudmade.com" +
+				  "/1a1b06b230af4efdbb989ea99e9841af" + // http://cloudmade.com/register
+				  "/998/256/{Z}/{X}/{Y}.png")
       .hosts(["a.", "b.", "c.", ""])));
 
 	var focusHexLayer = d3.select( "#focusMap svg" ).insert( "svg:g" );
@@ -96,8 +105,8 @@ var binMap = (function () {
   binMap.filterData = function( minDate, maxDate ) {
 	   var filteredData = originalData.filter(
           function(d){
-            return d3.time.format("%Y-%m-%d").parse(d.datum).setYear(2000) >= minDate
-                      && d3.time.format("%Y-%m-%d").parse(d.datum).setYear(2000) <= maxDate;
+            return d3.time.format("%Y-%m-%d").parse(d.datum).setYear(2000) >= minDate &&
+				d3.time.format("%Y-%m-%d").parse(d.datum).setYear(2000) <= maxDate;
           });
 	    update(filteredData);
   };

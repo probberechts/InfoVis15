@@ -1,3 +1,7 @@
+"""
+Flask application bootstrapped from
+https://github.com/zachwill/flask_heroku
+"""
 import os
 from flask.ext.moresql import MoreSQL
 from flask import Flask, render_template, request
@@ -25,24 +29,6 @@ def home():
 def visualisatie():
     """Render the visualisation."""
     return render_template('visualisatie.html')
-
-
-@app.route('/simplemap')
-def map():
-    """Render simple scatterplot of locations."""
-    return render_template('scatterplot.html')
-
-
-@app.route('/binmap')
-def binmap():
-    """Render binmap"""
-    return render_template('binmap.html')
-
-
-@app.route('/heatmap')
-def heatmap():
-    """Render heatmap."""
-    return render_template('heatmap.html')
 
 
 ###
@@ -119,11 +105,6 @@ def get_tmin():
 @app.route('/data/weer/tmax', methods=['GET'])
 def get_tmax():
     return db.execute('get_tmax')
-
-
-@app.route('/data/weer/neerslag', methods=['GET'])
-def get_neerslag():
-    return db.execute('get_neerslag')
 
 
 ###

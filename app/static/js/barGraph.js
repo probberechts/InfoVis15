@@ -102,7 +102,7 @@ var barGraph = (function() {
 				})
 				.on("click", function(d) {
 					var clickedYear = d.year;
-					if (selectedYear == 0) { // all years are selected
+					if (selectedYear === 0) { // all years are selected
 	          d3.selectAll(".activeBar").classed("activeBar", false);
 	          d3.selectAll(".activeLine").classed("activeLine", false);
 						selectedYear = clickedYear;
