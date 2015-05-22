@@ -36,6 +36,7 @@ var barGraph = (function() {
 
 		barGraph.create();
 
+		//http://alignedleft.com/tutorials/d3/axes
 		var x = d3.scale.ordinal()
 			.domain(yearlyOcc.map(function(d) {
 				return d.year;
@@ -75,6 +76,7 @@ var barGraph = (function() {
 				.style("text-anchor", "end")
 				.text("# observaties");
 
+		//http://alignedleft.com/tutorials/d3/making-a-bar-chart
 		svg.selectAll("bar")
 				.data(yearlyOcc)
 				.enter().append("rect")
